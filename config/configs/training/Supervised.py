@@ -9,7 +9,7 @@
 import coqpit
 from attr import dataclass, field
 
-class Args(coqpit):
+class Config(coqpit):
     max_epochs : int = field(default=100, metadata={'help': 'max number of epochs'})
     lr : float = field(default=0.1, metadata={'help': 'learning rate'})
     momentum : float = field(default=0.9, metadata={'help': 'momentum'})

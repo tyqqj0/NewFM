@@ -8,7 +8,7 @@
 import coqpit
 from attr import dataclass, field
 
-class Args(coqpit):
+class Config(coqpit):
     num_classes : int = field(default=10, metadata={'help': 'number of classes'})
     pretrained : bool = field(default=False, metadata={'help': 'pretrained'})
     num_channels : int = field(default=3, metadata={'help': 'number of channels'})

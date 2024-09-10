@@ -8,9 +8,10 @@
 
 import coqpit
 from attr import dataclass
-from ..args.data import CIFAR10
-from ..args.model import Resnet18
-from ..args.training import Supervised
+from ..configs.basic import Basic
+from ..configs.data import CIFAR10
+from ..configs.model import Resnet18
+from ..configs.training import Supervised
 
 
 # import coqpit
@@ -20,14 +21,21 @@ from ..args.training import Supervised
 # Define the configuration file for the ResNet18 model on CIFAR10 dataset
 # The configuration file is a dictionary that contains the following keys:
 # trainer.py: The file that contains the training script
-# args.py: The file that contains the arguments for the training script
+# configs.py: The file that contains the arguments for the training script
 # use_wandb: A boolean that indicates whether to use Weights and Biases for logging
 # device : The device to use for training, default is first available GPU
 # project: The name of the project, whether to use Weights and Biases for logging
 @dataclass
 class Config(coqpit):
     trainer = "Resnet18_CIFAR_Supervised.py"
-    arg = "Resnet18_CIFAR10_Supervised.py"
-    use_wandb = True
     project = "Resnet18_CIFAR10_Supervised"
-    device = "cuda:0"
+    use_wandb = True
+
+# get() should be
+def get():
+    config = Basic.Config().init_from_argparse()
+    config.merge(CIFAR10.Config.init_from_argparse())
+    config.merge(Resnet18.Config.init_from_argparse())
+    config.merge(Supervised.Config.init_from_argparse())
+    config.merge(Config.init_from_argparse())
+    return config
