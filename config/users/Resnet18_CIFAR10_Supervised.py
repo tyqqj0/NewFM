@@ -8,10 +8,16 @@
 
 import coqpit
 from attr import dataclass
-from ..configs.basic import Basic
-from ..configs.data import CIFAR10
-from ..configs.model import Resnet18
-from ..configs.training import Supervised
+# from ..configs.basic import Basic
+# from ..configs.data import CIFAR10
+# from ..configs.model import Resnet18
+# from ..configs.training import Supervised
+
+configs = [
+    "data/CIFAR10.py",
+    "model/Resnet18.py",
+    "training/Supervised.py"
+]
 
 
 # import coqpit
@@ -31,11 +37,12 @@ class Config(coqpit):
     project = "Resnet18_CIFAR10_Supervised"
     use_wandb = True
 
-# get() should be
-def get():
-    config = Basic.Config().init_from_argparse()
-    config.merge(CIFAR10.Config.init_from_argparse())
-    config.merge(Resnet18.Config.init_from_argparse())
-    config.merge(Supervised.Config.init_from_argparse())
-    config.merge(Config.init_from_argparse())
-    return config
+# # get() should be
+# get() will not be use here, instead, the config will be automatically loaded from the config files when using run.py
+# def get():
+#     config = Basic.Config().init_from_argparse()
+#     config.merge(CIFAR10.Config.init_from_argparse())
+#     config.merge(Resnet18.Config.init_from_argparse())
+#     config.merge(Supervised.Config.init_from_argparse())
+#     config.merge(Config.init_from_argparse())
+#     return config
