@@ -7,6 +7,7 @@
 
 
 import utils
+from utils import logger
 from coqpit import Coqpit
 
 
@@ -18,15 +19,13 @@ def main(config: str, arg_dict: dict = None):
     utils.check_dirs(args)
     utils.cprint("Configuration file processed successfully", "green")
     args.pprint()
+    utils.initialize_logger(args)
+    logger.info("Logger initialized")
+    utils.cprint("Logger initialized", "green")
     return None
 
 
 if __name__ == '__main__':
     config = "config/users/Resnet18_CIFAR10_Supervised.py"
-    args = utils.process_config(config)
-    utils.check_dirs(args)
-    # print(args)
-    # print(type(args))
-    # print(issubclass(type(args), Coqpit))
-    args.pprint()
+    main(config)
 # comparison = 1
