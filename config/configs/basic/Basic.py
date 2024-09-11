@@ -7,6 +7,8 @@
 import datetime
 import os
 from dataclasses import asdict, dataclass, field
+from typing import Any
+
 import utils
 
 from coqpit import Coqpit
@@ -29,32 +31,57 @@ class Config(Coqpit):
     project_name: str = field(default='Default', metadata={'help': 'project name'})
     run_name: str = field(default='None', metadata={'help': 'run name'})
     base_dir: str = field(default='runs', metadata={'help': 'base directory'})
-    sub_dir: str = field(default='None', metadata={'help': 'sub directory in local directory: \\base_dir\\project\\run_name'})
-    log_dir: str = field(default='None', metadata={'help': 'log directory: \\base_dir\\project\\run_name\\logs'})
-    model_dir: str = field(default='None', metadata={'help': 'model directory: \\base_dir\\project\\run_name\\models'})
     use_wandb: bool = field(default=False, metadata={'help': 'use wandb for logging'})
+
+    _is_parsed: bool = field(default=False)
+    _sub_dir: str = field(default='None')
+    _log_dir: str = field(default='None')
+    _model_dir: str = field(default='None')
+
+    # def __post_init__(self):
+    #     super().__post_init__()
+    #     self.set_value('_is_parsed', False)
+    #     self.set_value('_sub_dir', 'None')
+    #     self.set_value('_log_dir', 'None')
+    #     self.set_value('_model_dir', 'None')
+
+
+    @property
+    def sub_dir(self) -> str:
+        if not self._is_parsed:
+            self._update_dirs()
+        return self._sub_dir
+
+    @property
+    def log_dir(self) -> str:
+        if not self._is_parsed:
+            self._update_dirs()
+        return self._log_dir
+
+    @property
+    def model_dir(self) -> str:
+        if not self._is_parsed:
+            self._update_dirs()
+        return self._model_dir
+
+    def _update_dirs(self) -> None:
+        if self.base_dir == 'None':
+            self.base_dir = os.path.join(utils.PROJECT_ROOT, 'runs')
+        if not os.path.isabs(self.base_dir):
+            self.base_dir = os.path.join(utils.PROJECT_ROOT, self.base_dir)
+
+        if self.run_name == 'None':
+            self.run_name = str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+
+        self._sub_dir = os.path.join(self.base_dir, self.project_name, self.run_name)
+        self._log_dir = os.path.join(self._sub_dir, 'logs')
+        self._model_dir = os.path.join(self._sub_dir, 'models')
 
     # wandb_sweep : str = "???" # sweep shouldn't be here
 
     def check_values(self, ):
         # print("here")
-        # if self.use_wandb:
-        # process base_dir, if base_dir is not absolute path, then make it absolute path
-        if self.base_dir == 'None':
-            self.base_dir = os.path.join(utils.PROJECT_ROOT, 'runs')
-        if self.base_dir != 'None' and not os.path.isabs(self.base_dir):
-            self.base_dir = os.path.join(utils.PROJECT_ROOT, self.base_dir)
-        # setting the default value for run_name and sub_dir
-        if self.run_name == 'None':
-            # using time as the default run_name
-            self.run_name = str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
-        if self.sub_dir == 'None':
-            # using project name as the default sub_dir
-            self.sub_dir = os.path.join(self.base_dir, self.project_name, self.run_name)
-        if self.log_dir == 'None':
-            self.log_dir = os.path.join(self.sub_dir, 'logs')
-        if self.model_dir == 'None':
-            self.model_dir = os.path.join(self.sub_dir, 'models')
+        self._update_dirs()
         # print(self)
         ca = asdict(self)
         # print(ca)
@@ -65,11 +92,21 @@ class Config(Coqpit):
         check_argument("project_name", ca, restricted=True, allow_none=False)
         check_argument("run_name", ca, restricted=True, allow_none=False)
         check_argument("base_dir", ca, restricted=True, allow_none=False)
-        check_argument("sub_dir", ca, restricted=True, allow_none=False)
-        check_argument("log_dir", ca, restricted=True, allow_none=False)
-        check_argument("model_dir", ca, restricted=True, allow_none=False)
+        # check_argument("sub_dir", ca, restricted=True, allow_none=False)
+        # check_argument("log_dir", ca, restricted=True, allow_none=False)
+        # check_argument("model_dir", ca, restricted=True, allow_none=False)
 
         return self
+
+    def is_parsed(self):
+        self._is_parsed = True
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if self._is_parsed and name in ['project_name', 'run_name', 'base_dir']:
+            raise AttributeError(f"Cannot modify {name} after configuration has been parsed.")
+        super().__setattr__(name, value)
+        if name in ['project_name', 'run_name', 'base_dir']:
+            self._is_parsed = False
 
 
 if __name__ == '__main__':
