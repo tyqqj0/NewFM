@@ -160,7 +160,7 @@ def process_config(config_path: str) -> Coqpit:
 
     Config = Config.init_from_argparse()
 
-    print(type(Config))
+    # print(type(Config))
 
     # first check if basic config is in the list, if not, add it
     if 'configs/basic/Basic.py' not in configs:
@@ -173,6 +173,7 @@ def process_config(config_path: str) -> Coqpit:
     # Merge the configs into the main config
     # Config should be last in the list
     main_config = config_list[0].copy()
+    # main_config.
     # print(type(main_config))
     # main_config.pprint()
     for config in config_list[1:]:
@@ -183,7 +184,11 @@ def process_config(config_path: str) -> Coqpit:
         # print("after merge:", main_config)
     # print(config_list[1:])
     # main_config.merge(config_list[1:])
-    print("Merged config:", main_config)
-    print("Merged config:", main_config.__dict__)
-    print("Merged config:", main_config.to_dict())
+    # print("Merged config:", main_config)
+    # print("Merged config:", main_config.__dict__)
+    # print("Merged config:", main_config.to_dict())
+    # if main_config have a _update_dirs method, call it
+    if hasattr(main_config, 'check_values'):
+        main_config.check_values()
+
     return main_config

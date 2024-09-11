@@ -7,6 +7,7 @@
 
 from .paths import PROJECT_ROOT, UTILS_DIR, CONFIG_DIR
 from .config_processor.processor import process_config
+from .dir_processor import check_dirs
 
 
 

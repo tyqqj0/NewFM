@@ -33,36 +33,13 @@ class Config(Coqpit):
     base_dir: str = field(default='runs', metadata={'help': 'base directory'})
     use_wandb: bool = field(default=False, metadata={'help': 'use wandb for logging'})
 
-    _is_parsed: bool = field(default=False)
-    _sub_dir: str = field(default='None')
-    _log_dir: str = field(default='None')
-    _model_dir: str = field(default='None')
+    sub_dir: str = field(default='None')
+    log_dir: str = field(default='None')
+    model_dir: str = field(default='None')
 
-    # def __post_init__(self):
-    #     super().__post_init__()
-    #     self.set_value('_is_parsed', False)
-    #     self.set_value('_sub_dir', 'None')
-    #     self.set_value('_log_dir', 'None')
-    #     self.set_value('_model_dir', 'None')
-
-
-    @property
-    def sub_dir(self) -> str:
-        if not self._is_parsed:
-            self._update_dirs()
-        return self._sub_dir
-
-    @property
-    def log_dir(self) -> str:
-        if not self._is_parsed:
-            self._update_dirs()
-        return self._log_dir
-
-    @property
-    def model_dir(self) -> str:
-        if not self._is_parsed:
-            self._update_dirs()
-        return self._model_dir
+    def __post_init__(self):
+        super().__post_init__()
+        self._update_dirs()
 
     def _update_dirs(self) -> None:
         if self.base_dir == 'None':
@@ -73,9 +50,9 @@ class Config(Coqpit):
         if self.run_name == 'None':
             self.run_name = str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 
-        self._sub_dir = os.path.join(self.base_dir, self.project_name, self.run_name)
-        self._log_dir = os.path.join(self._sub_dir, 'logs')
-        self._model_dir = os.path.join(self._sub_dir, 'models')
+        self.sub_dir = os.path.join(self.base_dir, self.project_name, self.run_name)
+        self.log_dir = os.path.join(self.sub_dir, 'logs')
+        self.model_dir = os.path.join(self.sub_dir, 'models')
 
     # wandb_sweep : str = "???" # sweep shouldn't be here
 
@@ -98,15 +75,22 @@ class Config(Coqpit):
 
         return self
 
-    def is_parsed(self):
-        self._is_parsed = True
+    # def is_parsed(self):
+    #     self._is_parsed = True
 
     def __setattr__(self, name: str, value: Any) -> None:
-        if self._is_parsed and name in ['project_name', 'run_name', 'base_dir']:
-            raise AttributeError(f"Cannot modify {name} after configuration has been parsed.")
+        # if self._is_parsed and name in ['project_name', 'run_name', 'base_dir']:
+        #     raise AttributeError(f"Cannot modify {name} after configuration has been parsed.")
         super().__setattr__(name, value)
         if name in ['project_name', 'run_name', 'base_dir']:
-            self._is_parsed = False
+            # self._is_parsed = False
+            # self._update_dirs()
+            self.check_values()
+
+    def __getattr__(self, item):
+        if item in ['project_name', 'run_name', 'base_dir']:
+            self._update_dirs()
+        return super().__getattribute__(item)
 
 
 if __name__ == '__main__':
