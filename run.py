@@ -22,6 +22,9 @@ def main(config: str, arg_dict: dict = None):
     utils.initialize_logger(args)
     logger.info("Logger initialized")
     utils.cprint("Logger initialized", "green")
+
+    # run Trainer
+    # TODO: Trainer
     return None
 
 
