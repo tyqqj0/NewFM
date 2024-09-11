@@ -34,15 +34,13 @@ def load_Coqpit(config_path: str) -> Coqpit:
     Raises:
         FileNotFoundError: If the config file doesn't exist.
     """
-    try:
-        # try original path
-        if not os.path.exists(config_path):
-            raise FileNotFoundError
-    except FileNotFoundError:
-        if not os.path.exists(os.path.join(CONFIG_DIR, config_path)):
-            raise FileNotFoundError
+    # Check if the file exists
+    if not os.path.exists(config_path):
+        alternative_path = os.path.join(CONFIG_DIR, config_path)
+        if os.path.exists(alternative_path):
+            config_path = alternative_path
         else:
-            config_path = os.path.join(CONFIG_DIR, config_path)
+            raise FileNotFoundError(f"Config file not found: {config_path}")
 
     # Load the config module
     spec = importlib.util.spec_from_file_location("config_module", config_path)
@@ -53,13 +51,49 @@ def load_Coqpit(config_path: str) -> Coqpit:
     if not hasattr(config_module, 'Config'):
         raise AttributeError("Config file must contain 'Config' class")
 
-    Config: Coqpit = config_module.Config
+    ConfigClass = config_module.Config
 
-    # instantiate the config
-    Config = Config.init_from_argparse()
-    print(type(Config))
-    Config.pprint()
-    return Config
+    # print(f"ConfigClass: {ConfigClass}")
+    # print(f"Is subclass of Coqpit: {issubclass(ConfigClass, Coqpit)}")
+
+    # # 尝试查看 Config 类的属性
+    # print("Config class attributes:")
+    # for attr in dir(ConfigClass):
+    #     if not attr.startswith("__"):
+    #         print(f"  {attr}: {getattr(ConfigClass, attr)}")
+
+    # 实例化配置
+    try:
+        config_instance = ConfigClass.init_from_argparse()
+        # print(f"Config instance type: {type(config_instance)}")
+        # print("Config instance attributes:")
+        # for attr in dir(config_instance):
+        #     if not attr.startswith("__"):
+        #         print(f"  {attr}: {getattr(config_instance, attr)}")
+
+        # 尝试使用 to_dict() 方法
+        if hasattr(config_instance, 'to_dict'):
+            # print("Config as dict:")
+            # print(config_instance.to_dict())
+            pass
+        else:
+            # print("to_dict() method not found")
+            pass
+
+        # 尝试使用 pprint() 方法
+        if hasattr(config_instance, 'pprint'):
+            # print("Config pprint:")
+            # config_instance.pprint()
+            pass
+        else:
+            # print("pprint() method not found")
+            pass
+
+    except Exception as e:
+        print(f"Error instantiating Config: {e}")
+        raise
+
+    return config_instance
 
 
 def load_configs_from_list(configs: List[str]) -> List[Coqpit]:
@@ -124,20 +158,32 @@ def process_config(config_path: str) -> Coqpit:
     configs: List[str] = config_module.configs
     Config: Coqpit = config_module.Config
 
+    Config = Config.init_from_argparse()
+
+    print(type(Config))
+
     # first check if basic config is in the list, if not, add it
     if 'configs/basic/Basic.py' not in configs:
         configs.insert(0, 'configs/basic/Basic.py')
-
+    # print(configs)
     # Process inherited configs
     # load configs as a list of Coqpit objects
     config_list = load_configs_from_list(configs)
     config_list.append(Config)
     # Merge the configs into the main config
     # Config should be last in the list
-    main_config = config_list[0]
-    print(type(main_config))
-    main_config.pprint()
+    main_config = config_list[0].copy()
+    # print(type(main_config))
+    # main_config.pprint()
     for config in config_list[1:]:
-        main_config = main_config.merge(config)
-
+        # print(configs[config_list.index(config)])
+        # print(config)
+        # print("before merge:", main_config)
+        main_config.merge(config)
+        # print("after merge:", main_config)
+    # print(config_list[1:])
+    # main_config.merge(config_list[1:])
+    print("Merged config:", main_config)
+    print("Merged config:", main_config.__dict__)
+    print("Merged config:", main_config.to_dict())
     return main_config

@@ -7,7 +7,8 @@
 
 
 from coqpit import Coqpit
-from attr import dataclass
+# from attr import dataclass
+from dataclasses import asdict, dataclass, field
 # from ..configs.basic import Basic
 # from ..configs.data import CIFAR10
 # from ..configs.model import Resnet18
@@ -31,7 +32,11 @@ configs = [
 # project: The name of the project, whether to use Weights and Biases for logging
 @dataclass
 class Config(Coqpit):
-    trainer = "Resnet18_CIFAR_Supervised.py"
-    project_name = "Resnet18_CIFAR10_Supervised"
-    use_wandb = True
+    trainer: str = "Resnet18_CIFAR_Supervised.py"
+    project_name: str = "Resnet18_CIFAR10_Supervised"
+    use_wandb: bool = True
+
+
+if __name__ == "__main__":
+    print(Config())
 

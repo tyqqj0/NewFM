@@ -6,7 +6,8 @@
 # @Aim 
 
 from coqpit import Coqpit
-from attr import dataclass, field
+# from attr import dataclass, field
+from dataclasses import asdict, dataclass, field
 
 @dataclass
 class Config(Coqpit):
