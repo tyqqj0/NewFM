@@ -145,6 +145,8 @@ def process_config(config_path: str) -> Coqpit:
     except FileNotFoundError:
         if not os.path.exists(os.path.join(CONFIG_DIR, config_path)):
             raise FileNotFoundError
+        else:
+            config_path = os.path.join(CONFIG_DIR, config_path)
 
     # Load the config module
     spec = importlib.util.spec_from_file_location("config_module", config_path)

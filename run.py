@@ -29,6 +29,6 @@ def main(config: str, arg_dict: dict = None):
 
 
 if __name__ == '__main__':
-    config = "config/users/Resnet18_CIFAR10_Supervised.py"
+    config = "users/Example.py"
     main(config)
 # comparison = 1

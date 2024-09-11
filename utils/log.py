@@ -74,7 +74,7 @@ def get_logger(config: Optional[object] = None) -> logging.Logger:
     if not hasattr(get_logger, "logger"):
         log_dir = config.log_dir if config and hasattr(config, 'log_dir') else 'logs'
         # print()
-        get_logger.logger = setup_logger("project_name", log_dir)
+        get_logger.logger = setup_logger(config.project_name, log_dir)
     return get_logger.logger
 
 # 使用示例
