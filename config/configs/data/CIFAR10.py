@@ -6,11 +6,11 @@
 # @Aim 
 
 
-import coqpit
+from coqpit import Coqpit
 from attr import dataclass, field
 
-
-class Config(coqpit):
+@dataclass
+class Config(Coqpit):
     max_data : int = field(default=10000, metadata={'help': 'max number of data'})
     batch_size : int = field(default=64, metadata={'help': 'batch size'})
     num_workers : int = field(default=0, metadata={'help': 'number of workers'})

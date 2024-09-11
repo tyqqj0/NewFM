@@ -5,10 +5,11 @@
 # @
 # @Aim 
 
-import coqpit
+from coqpit import Coqpit
 from attr import dataclass, field
 
-class Config(coqpit):
+@dataclass
+class Config(Coqpit):
     num_classes : int = field(default=10, metadata={'help': 'number of classes'})
     pretrained : bool = field(default=False, metadata={'help': 'pretrained'})
     num_channels : int = field(default=3, metadata={'help': 'number of channels'})
