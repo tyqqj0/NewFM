@@ -11,7 +11,7 @@ import importlib.util
 import os
 from typing import List, Union, Dict, Any
 from coqpit import Coqpit
-from attr import dataclass
+# from attr import dataclass
 
 from ..paths import CONFIG_DIR, PROJECT_ROOT, UTILS_DIR
 
