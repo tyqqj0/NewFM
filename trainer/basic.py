@@ -140,37 +140,16 @@ class BasicTrainer(ABC):
         # print("所有必要属性已正确设置。")
 
 
-# def merge_configs(parent_config: dict, child_config: dict):
-#     """合并两个配置字典，子配置覆盖父配置。"""
-#     if parent_config is None:
-#         parent_config = {}
-#     if child_config is None:
-#         child_config = {}
-#     if not isinstance(parent_config, dict) or not isinstance(child_config, dict):
-#         raise ValueError('Both parent_config and child_config should be dict')
-#     for key, value in child_config.items():
-#         if key in parent_config and isinstance(parent_config[key], dict) and isinstance(value, dict):
-#             merge_configs(parent_config[key], value)
-#         else:
-#             parent_config[key] = value
-#     return parent_config
-
-
-# 统一路径中的斜杠
-# def unify_slash(path):
-#     return path.replace('\\', '/')
-
-
 class BasicEpoch(ABC):
-    def __init__(self, name, loader, task: BasicTrainer, color='white', bar=True):
+    def __init__(self, name, loader, trainer: BasicTrainer, color='white', bar=True):
         self.name = name
         self.epoch_count = 0
-        self.task = task
-        self.model = task.model
-        self.criterion = task.criterion
-        self.optimizer = task.optimizer
-        self.scheduler = task.scheduler
-        self.device = task.device
+        self.task = trainer
+        self.model = trainer.model
+        self.criterion = trainer.criterion
+        self.optimizer = trainer.optimizer
+        self.scheduler = trainer.scheduler
+        self.device = trainer.device
         self.color = color
         self.bar = bar
         self.loadert = loader
@@ -203,3 +182,23 @@ class BasicEpoch(ABC):
     @abstractmethod
     def epoch(self):
         pass
+
+# def merge_configs(parent_config: dict, child_config: dict):
+#     """合并两个配置字典，子配置覆盖父配置。"""
+#     if parent_config is None:
+#         parent_config = {}
+#     if child_config is None:
+#         child_config = {}
+#     if not isinstance(parent_config, dict) or not isinstance(child_config, dict):
+#         raise ValueError('Both parent_config and child_config should be dict')
+#     for key, value in child_config.items():
+#         if key in parent_config and isinstance(parent_config[key], dict) and isinstance(value, dict):
+#             merge_configs(parent_config[key], value)
+#         else:
+#             parent_config[key] = value
+#     return parent_config
+
+
+# 统一路径中的斜杠
+# def unify_slash(path):
+#     return path.replace('\\', '/')
