@@ -23,8 +23,9 @@ from utils.text import text_in_box, RichProgressIterator
 __all__ = ('BasicTrainer', 'BasicEpoch')
 
 
+# TODO: 思考继承重复的问题
+# TODO: 解决模块间通信问题
 class BasicTrainer(ABC):
-    config_json = './Basic.json'
 
     def __init__(self, args):
         self.args = args
@@ -102,12 +103,22 @@ class BasicTrainer(ABC):
             wandb.log(data, step=self.epoch, commit=True)
         print(data)
 
-    def log_img(self, data, caption=None):
+    def log_plot(self, x, y, title=None, columns=None, name='plot'):
+        if columns is None:
+            columns = ['x', 'y']
+        data = list(zip(x, y))
+        if self.use_wandb:
+            tabel = wandb.Table(columns=columns, data=data)
+            wandb.log({name: wandb.plot.line(tabel, columns[0], columns[1])}, step=self.epoch, commit=True, title=title)
 
+    def log_img(self, data, caption=None):
         if isinstance(data, torch.Tensor):
             data = data.cpu().numpy()
         if self.use_wandb:
             wandb.log({caption: [wandb.Image(data)]}, step=self.epoch, commit=True)
+        else:
+            # 保存到本地
+            pass
 
     def log_tabel(self, data: list, columns=None, name='table'):
         if self.use_wandb:
@@ -170,8 +181,6 @@ class BasicEpoch(ABC):
         # print("start")
         return self.epoch()
 
-    # def print(self):
-    #     if self.bar:
     def uprint(self, additional_info=""):
         if self.bar:
             # 假设 self.loader 是一个 tqdm 进度条对象
