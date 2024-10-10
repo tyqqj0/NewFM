@@ -20,7 +20,7 @@ from utils.text import text_in_box, RichProgressIterator
 # import pandas as pd
 # import torchvision
 
-__all__ = ('BasicTrainer', 'BasicEpoch')
+__all__ = ("BasicTrainer", "BasicEpoch")
 
 
 # TODO: 思考继承重复的问题
@@ -42,23 +42,23 @@ class BasicTrainer(ABC):
     def _init_wandb(self):
         if not self.use_wandb:
             return
-        text_in_box('Init Wandb', color='orange')
+        text_in_box("Init Wandb", color="orange")
         wandb.login()
         wandb.init(project=self.args.experiment_name, name=self.args.run_name)
         wandb.config.update(self.args)
 
     def _init_components(self):
-        print('Building dataloader...')
+        print("Building dataloader...")
         self.train_loader, self.val_loader = self.build_dataloader()
-        print('Building model...')  #
+        print("Building model...")  #
         self.model = self.build_model().to(self.device)
-        print('Building trainer...')
+        print("Building trainer...")
         self.criterion = self.build_criterion()
         self.optimizer = self.build_optimizer()
         self.scheduler = self.build_scheduler()
         self.epoch = 0
         self.max_epoch = self.args.max_epoch
-        text_in_box(f'Init run {self.args.run_name} Done', color='orange')
+        text_in_box(f"Init run {self.args.run_name} Done", color="orange")
 
     @abstractmethod
     def build_dataloader(self):
@@ -87,7 +87,7 @@ class BasicTrainer(ABC):
     def run_train(self):
         for epoch in range(1, self.max_epoch + 1):
             self.epoch = epoch
-            text_in_box(f'Epoch {epoch}', color='white')
+            text_in_box(f"Epoch {epoch}", color="white")
             log = self.run_epoch()
             self.log_metrics(log)
 
@@ -98,18 +98,23 @@ class BasicTrainer(ABC):
             elif isinstance(data, tuple) and len(data) == 2:
                 data = {data[0]: data[1]}
             else:
-                raise ValueError('data should be dict or list or tuple')
+                raise ValueError("data should be dict or list or tuple")
         if self.use_wandb:
             wandb.log(data, step=self.epoch, commit=True)
         print(data)
 
-    def log_plot(self, x, y, title=None, columns=None, name='plot'):
+    def log_plot(self, x, y, title=None, columns=None, name="plot"):
         if columns is None:
-            columns = ['x', 'y']
+            columns = ["x", "y"]
         data = list(zip(x, y))
         if self.use_wandb:
             tabel = wandb.Table(columns=columns, data=data)
-            wandb.log({name: wandb.plot.line(tabel, columns[0], columns[1])}, step=self.epoch, commit=True, title=title)
+            wandb.log(
+                {name: wandb.plot.line(tabel, columns[0], columns[1])},
+                step=self.epoch,
+                commit=True,
+                title=title,
+            )
 
     def log_img(self, data, caption=None):
         if isinstance(data, torch.Tensor):
@@ -120,15 +125,15 @@ class BasicTrainer(ABC):
             # 保存到本地
             pass
 
-    def log_tabel(self, data: list, columns=None, name='table'):
+    def log_tabel(self, data: list, columns=None, name="table"):
         if self.use_wandb:
             tabel = wandb.Table(columns=columns, data=data)
             wandb.log({name: tabel}, step=self.epoch, commit=True)
 
     def run(self):
-        text_in_box(f'Start Run train {self.args.run_name}', color='orange')
+        text_in_box(f"Start Run train {self.args.run_name}", color="orange")
         if self.args is None:
-            raise ValueError('Please use parse_args first')
+            raise ValueError("Please use parse_args first")
         self.__property_check()
         if self.use_wandb:
             wandb.config.update(self.args)
@@ -142,17 +147,27 @@ class BasicTrainer(ABC):
     def __property_check(self):
         # 检查所有属性的设值情况
         required_properties = [
-            'train_loader', 'val_loader', 'model', 'criterion', 'optimizer', 'device', 'epoch', 'max_epoch', 'running'
+            "train_loader",
+            "val_loader",
+            "model",
+            "criterion",
+            "optimizer",
+            "device",
+            "epoch",
+            "max_epoch",
+            "running",
         ]
-        missing_properties = [prop for prop in required_properties if getattr(self, prop, None) is None]
+        missing_properties = [
+            prop for prop in required_properties if getattr(self, prop, None) is None
+        ]
         if missing_properties:
-            missing_str = ', '.join(missing_properties)
+            missing_str = ", ".join(missing_properties)
             raise ValueError(f"Missing required properties: {missing_str}")
         # print("所有必要属性已正确设置。")
 
 
 class BasicEpoch(ABC):
-    def __init__(self, name, loader, trainer: BasicTrainer, color='white', bar=True):
+    def __init__(self, name, loader, trainer: BasicTrainer, color="white", bar=True):
         self.name = name
         self.epoch_count = 0
         self.task = trainer
@@ -169,15 +184,19 @@ class BasicEpoch(ABC):
         for a in loader:
             if len(a) != 3:
                 print(a)
-                raise ValueError(f'loader should return 3 values: inputs, targets, addition, got {len(a)}')
+                raise ValueError(
+                    f"loader should return 3 values: inputs, targets, addition, got {len(a)}"
+                )
             else:
                 break
 
     def run(self):
         self.epoch_count = self.epoch_count + 1
-        text_in_box(f'{self.name} epoch {self.task.epoch}', color=self.color)
+        text_in_box(f"{self.name} epoch {self.task.epoch}", color=self.color)
         if self.bar:
-            self.loader = RichProgressIterator(self.loadert, description=f'{self.name} epoch')
+            self.loader = RichProgressIterator(
+                self.loadert, description=f"{self.name} epoch"
+            )
         # print("start")
         return self.epoch()
 
@@ -191,6 +210,7 @@ class BasicEpoch(ABC):
     @abstractmethod
     def epoch(self):
         pass
+
 
 # def merge_configs(parent_config: dict, child_config: dict):
 #     """合并两个配置字典，子配置覆盖父配置。"""
