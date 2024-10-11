@@ -11,6 +11,7 @@ import importlib.util
 import os
 from typing import List, Union, Dict, Any
 from coqpit import Coqpit
+
 # from attr import dataclass
 
 from ..paths import CONFIG_DIR, PROJECT_ROOT, UTILS_DIR
@@ -48,7 +49,7 @@ def load_Coqpit(config_path: str) -> Coqpit:
     spec.loader.exec_module(config_module)
 
     # Check for required attributes
-    if not hasattr(config_module, 'Config'):
+    if not hasattr(config_module, "Config"):
         raise AttributeError("Config file must contain 'Config' class")
 
     ConfigClass = config_module.Config
@@ -72,7 +73,7 @@ def load_Coqpit(config_path: str) -> Coqpit:
         #         print(f"  {attr}: {getattr(config_instance, attr)}")
 
         # 尝试使用 to_dict() 方法
-        if hasattr(config_instance, 'to_dict'):
+        if hasattr(config_instance, "to_dict"):
             # print("Config as dict:")
             # print(config_instance.to_dict())
             pass
@@ -81,7 +82,7 @@ def load_Coqpit(config_path: str) -> Coqpit:
             pass
 
         # 尝试使用 pprint() 方法
-        if hasattr(config_instance, 'pprint'):
+        if hasattr(config_instance, "pprint"):
             # print("Config pprint:")
             # config_instance.pprint()
             pass
@@ -117,27 +118,27 @@ def load_configs_from_list(configs: List[str]) -> List[Coqpit]:
 
 def process_config(config_path: str) -> Coqpit:
     """
-        Process the config file, merging inherited configs into the main config.
+    Process the config file, merging inherited configs into the main config.
 
-        This function loads a config file, processes any inherited configs specified
-        in the 'configs' list, and merges them into a single Coqpit object.
+    This function loads a config file, processes any inherited configs specified
+    in the 'configs' list, and merges them into a single Coqpit object.
 
-        Args:
-            config_path (str): The path to the config file. Should contain a 'configs'
-                               list and a 'Config' class.
+    Args:
+        config_path (str): The path to the config file. Should contain a 'configs'
+                           list and a 'Config' class.
 
-        Returns:
-            Coqpit: A Coqpit object representing the merged configuration.
+    Returns:
+        Coqpit: A Coqpit object representing the merged configuration.
 
-        Raises:
-            FileNotFoundError: If the config file doesn't exist.
-            AttributeError: If the config file doesn't contain required attributes.
+    Raises:
+        FileNotFoundError: If the config file doesn't exist.
+        AttributeError: If the config file doesn't contain required attributes.
 
-        Example:
-            config = process_config("./config/configs/model/Resnet18.py")
-            print(config.model_name)
-            'Resnet18'
-        """
+    Example:
+        config = process_config("./config/configs/model/Resnet18.py")
+        print(config.model_name)
+        'Resnet18'
+    """
     try:
         # try original path
         if not os.path.exists(config_path):
@@ -154,8 +155,10 @@ def process_config(config_path: str) -> Coqpit:
     spec.loader.exec_module(config_module)
 
     # Check for required attributes
-    if not hasattr(config_module, 'configs') or not hasattr(config_module, 'Config'):
-        raise AttributeError("Config file must contain 'configs' list and 'Config' class")
+    if not hasattr(config_module, "configs") or not hasattr(config_module, "Config"):
+        raise AttributeError(
+            "Config file must contain 'configs' list and 'Config' class"
+        )
 
     configs: List[str] = config_module.configs
     Config: Coqpit = config_module.Config
@@ -165,8 +168,8 @@ def process_config(config_path: str) -> Coqpit:
     # print(type(Config))
 
     # first check if basic config is in the list, if not, add it
-    if 'configs/basic/Basic.py' not in configs:
-        configs.insert(0, 'configs/basic/Basic.py')
+    if "configs/basic/Basic.py" not in configs:
+        configs.insert(0, "configs/basic/Basic.py")
     # print(configs)
     # Process inherited configs
     # load configs as a list of Coqpit objects
@@ -190,7 +193,7 @@ def process_config(config_path: str) -> Coqpit:
     # print("Merged config:", main_config.__dict__)
     # print("Merged config:", main_config.to_dict())
     # if main_config have a _update_dirs method, call it
-    if hasattr(main_config, 'check_values'):
+    if hasattr(main_config, "check_values"):
         main_config.check_values()
 
     return main_config

@@ -27,32 +27,37 @@ __all__ = ("BasicTrainer", "BasicEpoch")
 # TODO: 解决模块间通信问题
 class BasicTrainer(ABC):
 
-    def __init__(self, args):  # , logger, save_manager
+    def __init__(self, args):
         self.args = args
         logger.info("Trainer initializing")
-        # self.logger = logger
-        # self.save_manager = save_manager
         self.time = time.strftime("%Y%m%d-%H%M%S", time.localtime())
         self.running = False
 
-
         self.device = torch.device(self.args.device)
-        self._init_components()
+        if self.device.type == "cuda":
+            logger.info(f"CUDA is available, using GPU {self.device.index}")
+        else:
+            logger.warning(f"CUDA is not available, using CPU")
 
+        self._init_components()
+        logger.info("Trainer initialized")
+        text_in_box(f"Init run {self.args.run_name} Done", color="orange")
 
     def _init_components(self):
         self.train_loader, self.val_loader = self.build_dataloader()
         logger.info("Dataloader built")
-        print("Building model...")  #
         self.model = self.build_model().to(self.device)
         logger.info("Model built")
-        print("Building trainer...")
         self.criterion = self.build_criterion()
+        logger.info("Criterion built")
         self.optimizer = self.build_optimizer()
+        logger.info("Optimizer built")
         self.scheduler = self.build_scheduler()
+        logger.info("Scheduler built")
+        self.epochs = self.build_epochs()
+        logger.info("Epochs built")
         self.epoch = 0
         self.max_epoch = self.args.max_epoch
-        text_in_box(f"Init run {self.args.run_name} Done", color="orange")
 
     @abstractmethod
     def build_dataloader(self):
@@ -75,6 +80,10 @@ class BasicTrainer(ABC):
         pass
 
     @abstractmethod
+    def build_epochs(self):
+        pass
+
+    @abstractmethod
     def run_epoch(self):
         pass
 
@@ -82,19 +91,9 @@ class BasicTrainer(ABC):
         for epoch in range(1, self.max_epoch + 1):
             self.epoch = epoch
             text_in_box(f"Epoch {epoch}", color="white")
+            logger.info(f"Epoch {epoch} start")
             log = self.run_epoch()
             save_manager.log_metrics(log, step=self.epoch)
-
-    def log_metrics(self, data):
-        if not isinstance(data, dict):
-            if isinstance(data, list) and len(data) == 2:
-                data = {data[0]: data[1]}
-            elif isinstance(data, tuple) and len(data) == 2:
-                data = {data[0]: data[1]}
-            else:
-                raise ValueError("data should be dict or list or tuple")
-        
-        print(data)
 
     def run(self):
         text_in_box(f"Start Run train {self.args.run_name}", color="orange")
@@ -103,7 +102,6 @@ class BasicTrainer(ABC):
         self.__property_check()
         self.running = True
         self.run_train()
-
         self.running = False
 
     def __property_check(self):
@@ -126,52 +124,6 @@ class BasicTrainer(ABC):
             missing_str = ", ".join(missing_properties)
             raise ValueError(f"Missing required properties: {missing_str}")
         # print("所有必要属性已正确设置。")
-
-
-class BasicEpoch(ABC):
-    def __init__(self, name, loader, trainer: BasicTrainer, color="white", bar=True):
-        self.name = name
-        self.epoch_count = 0
-        self.task = trainer
-        self.model = trainer.model
-        self.criterion = trainer.criterion
-        self.optimizer = trainer.optimizer
-        self.scheduler = trainer.scheduler
-        self.device = trainer.device
-        self.color = color
-        self.bar = bar
-        self.loadert = loader
-        self.loader = loader
-        # 检查loader的返回值是否为三个，若不是则报错
-        for a in loader:
-            if len(a) != 3:
-                print(a)
-                raise ValueError(
-                    f"loader should return 3 values: inputs, targets, addition, got {len(a)}"
-                )
-            else:
-                break
-
-    def run(self):
-        self.epoch_count = self.epoch_count + 1
-        text_in_box(f"{self.name} epoch {self.task.epoch}", color=self.color)
-        if self.bar:
-            self.loader = RichProgressIterator(
-                self.loadert, description=f"{self.name} epoch"
-            )
-        # print("start")
-        return self.epoch()
-
-    def uprint(self, additional_info=""):
-        if self.bar:
-            # 假设 self.loader 是一个 tqdm 进度条对象
-            self.loader.uprint(additional_info)
-        else:
-            print(additional_info)
-
-    @abstractmethod
-    def epoch(self):
-        pass
 
 
 # def merge_configs(parent_config: dict, child_config: dict):

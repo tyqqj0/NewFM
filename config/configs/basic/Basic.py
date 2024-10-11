@@ -12,6 +12,7 @@ from typing import Any
 import utils
 
 from coqpit import Coqpit
+
 # from attr import
 from coqpit import check_argument
 
@@ -22,41 +23,44 @@ from coqpit import check_argument
 # log_dir: The directory where the logs will be saved
 # model_dir: The directory where the models will be saved
 
+
 @dataclass
 class Config(Coqpit):
-    trainer: str = field(default='None', metadata={'help': 'trainer file'})
-    seed: int = field(default=42, metadata={'help': 'seed'})
+    trainer: str = field(default="None", metadata={"help": "trainer file"})
+    seed: int = field(default=42, metadata={"help": "seed"})
     # log_dir: base_dir + 'logs'
-    device: str = field(default='cuda', metadata={'help': 'device'})
-    project_name: str = field(default='Default', metadata={'help': 'project name'})
-    run_name: str = field(default='None', metadata={'help': 'run name'})
-    base_dir: str = field(default='runs', metadata={'help': 'base directory'})
-    use_wandb: bool = field(default=False, metadata={'help': 'use wandb for logging'})
+    device: str = field(default="cuda", metadata={"help": "device"})
+    project_name: str = field(default="Default", metadata={"help": "project name"})
+    run_name: str = field(default="None", metadata={"help": "run name"})
+    base_dir: str = field(default="runs", metadata={"help": "base directory"})
+    use_wandb: bool = field(default=False, metadata={"help": "use wandb for logging"})
 
-    sub_dir: str = field(default='None')
-    log_dir: str = field(default='None')
-    model_dir: str = field(default='None')
+    sub_dir: str = field(default="None")
+    log_dir: str = field(default="None")
+    model_dir: str = field(default="None")
 
     def __post_init__(self):
         super().__post_init__()
         self._update_dirs()
 
     def _update_dirs(self) -> None:
-        if self.base_dir == 'None':
-            self.base_dir = os.path.join(utils.PROJECT_ROOT, 'runs')
+        if self.base_dir == "None":
+            self.base_dir = os.path.join(utils.PROJECT_ROOT, "runs")
         if not os.path.isabs(self.base_dir):
             self.base_dir = os.path.join(utils.PROJECT_ROOT, self.base_dir)
 
-        if self.run_name == 'None':
-            self.run_name = str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+        if self.run_name == "None":
+            self.run_name = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
 
         self.sub_dir = os.path.join(self.base_dir, self.project_name, self.run_name)
-        self.log_dir = os.path.join(self.sub_dir, 'logs')
-        self.model_dir = os.path.join(self.sub_dir, 'models')
+        self.log_dir = os.path.join(self.sub_dir, "logs")
+        self.model_dir = os.path.join(self.sub_dir, "models")
 
     # wandb_sweep : str = "???" # sweep shouldn't be here
 
-    def check_values(self, ):
+    def check_values(
+        self,
+    ):
         # print("here")
         self._update_dirs()
         # print(self)
@@ -82,20 +86,21 @@ class Config(Coqpit):
         # if self._is_parsed and name in ['project_name', 'run_name', 'base_dir']:
         #     raise AttributeError(f"Cannot modify {name} after configuration has been parsed.")
         super().__setattr__(name, value)
-        if name in ['project_name', 'run_name', 'base_dir']:
+        if name in ["project_name", "run_name", "base_dir"]:
             # self._is_parsed = False
             # self._update_dirs()
             self.check_values()
 
     def __getattr__(self, item):
-        if item in ['project_name', 'run_name', 'base_dir']:
+        if item in ["project_name", "run_name", "base_dir"]:
             self._update_dirs()
         return super().__getattribute__(item)
 
 
-if __name__ == '__main__':
-    c = Config()
-    # print("before parse", c.keys())
-    c.parse_args()
-    # print("after parse", c.keys())
-    print(c.pprint())
+if __name__ == "__main__":
+    # c = Config()
+    # # print("before parse", c.keys())
+    # c.parse_args()
+    # # print("after parse", c.keys())
+    # print(c.pprint())
+    pass

@@ -8,6 +8,7 @@
 @Desc    :   None
 """
 
+import numpy as np
 import torch
 import os
 import sys
@@ -47,6 +48,37 @@ class WandbSaveManager(BaseSaveManager):
             step=step,
             commit=True,
         )
+
+    def log_images(self, data, columns, name="images_table", step=None):
+        # Check if the data format is correct
+        if not all(isinstance(col, list) for col in data) or any(
+            len(col) != len(data[0]) for col in data
+        ):
+            raise ValueError(
+                "Incorrect data format. Please ensure all columns are lists and have the same length."
+            )
+
+        # Check if the number of columns matches the number of data columns
+        if len(columns) != len(data):
+            raise ValueError(
+                "The number of column names does not match the number of data columns."
+            )
+
+        # Convert data format
+        table_data = list(zip(*data))
+
+        # Process image data
+        for i, row in enumerate(table_data):
+            table_data[i] = list(row)
+            for j, item in enumerate(row):
+                if isinstance(item, (str, torch.Tensor, np.ndarray)):
+                    table_data[i][j] = wandb.Image(item)
+
+        # Create wandb table
+        table = wandb.Table(data=table_data, columns=columns)
+
+        # Log the table
+        wandb.log({name: table}, step=step, commit=True)
 
     def log_image(self, data, caption=None, step=None):
         if isinstance(data, torch.Tensor):

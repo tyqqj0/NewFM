@@ -39,6 +39,10 @@ class BaseSaveManager(ABC):
         pass
 
     @abstractmethod
+    def log_images(self, data, caption=None, step=None):
+        pass
+
+    @abstractmethod
     def log_table(self, data, columns=None, name="table", step=None):
         pass
 
