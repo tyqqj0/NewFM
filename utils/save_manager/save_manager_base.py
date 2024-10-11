@@ -14,8 +14,9 @@ import os
 import sys
 import time
 import json
-#import wandb
-#import numpy as np
+
+# import wandb
+# import numpy as np
 
 
 import numpy as np
@@ -45,26 +46,36 @@ class BaseSaveManager(ABC):
     def finalize(self):
         pass
 
-    def _process_tensor(self, tensor):
+    def _process_tensor(self, tensor) -> np.ndarray:
         """将PyTorch张量转换为NumPy数组"""
         return tensor.detach().cpu().numpy()
 
-    def _process_dict(self, data):
+    def _process_dict(self, data) -> dict:
         """处理字典类型的数据,将PyTorch张量转换为NumPy数组"""
-        processed_data = {}
-        for key, value in data.items():
-            if isinstance(value, torch.Tensor):
-                processed_data[key] = self._process_tensor(value)
+        # 如果不是字典，则返回原数据
+        if not isinstance(data, dict):
+            if isinstance(data, list) and len(data) == 2:
+                data = {data[0]: data[1]}
+            elif isinstance(data, tuple) and len(data) == 2:
+                data = {data[0]: data[1]}
             else:
-                processed_data[key] = value
+                raise ValueError("data should be dict or list or tuple")
+
+        # 使用字典推导式进行优化
+        processed_data = {
+            key: (
+                self._process_tensor(value)
+                if isinstance(value, torch.Tensor)
+                else value
+            )
+            for key, value in data.items()
+        }
         return processed_data
 
-    def _process_list(self, data):
+    def _process_list(self, data) -> list:
         """处理列表类型的数据,将PyTorch张量转换为NumPy数组"""
-        processed_data = []
-        for item in data:
-            if isinstance(item, torch.Tensor):
-                processed_data.append(self._process_tensor(item))
-            else:
-                processed_data.append(item)
+        processed_data = [
+            self._process_tensor(item) if isinstance(item, torch.Tensor) else item
+            for item in data
+        ]
         return processed_data

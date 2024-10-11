@@ -3,11 +3,11 @@
 # @Author tyqqj
 # @File run.py
 # @
-# @Aim 
+# @Aim
 
 
 import utils
-from utils import logger
+from utils import logger, cprint, initialize_utils, save_manager
 from coqpit import Coqpit
 
 
@@ -16,19 +16,27 @@ def main(config: str, arg_dict: dict = None):
     args = utils.process_config(config)
     if arg_dict is not None:
         args.update(arg_dict)
-    utils.check_dirs(args)
-    utils.cprint("Configuration file processed successfully", "green")
+
+    # process dirs
+    utils.process_dirs(args)
+    cprint("Configuration file processed successfully", "green")
+
+    # print args
     args.pprint()
-    utils.initialize_logger(args)
+
+    # initialize utils
+    utils.initialize_utils(args)
+    logger.info("Utils initialized")
     logger.info("Logger initialized")
-    utils.cprint("Logger initialized", "green")
+    cprint("Utils initialized", "green")
+    cprint("Logger initialized", "green")
 
     # run Trainer
     # TODO: Trainer
     return None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     config = "users/Example.py"
     main(config)
 # comparison = 1

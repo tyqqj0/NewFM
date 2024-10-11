@@ -21,7 +21,7 @@ def check_dir(dir_path: str) -> None:
 
 # check if [base_dir, sub_dir, log_dir, model_dir] exist
 # if not, create them
-def check_dirs(args) -> None:
+def process_dirs(args) -> None:
     check_list = ["base_dir", "sub_dir", "log_dir", "model_dir"]
     for item in check_list:
         if getattr(args, item) != 'None':

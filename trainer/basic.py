@@ -9,11 +9,11 @@ import time
 from abc import ABC, abstractmethod
 
 import torch
-import wandb
 import coqpit
 
 # from utils.arg import ConfigParser
 from utils.text import text_in_box, RichProgressIterator
+from utils import logger, save_manager
 
 # import os
 # import matplotlib.pyplot as plt
@@ -27,31 +27,25 @@ __all__ = ("BasicTrainer", "BasicEpoch")
 # TODO: 解决模块间通信问题
 class BasicTrainer(ABC):
 
-    def __init__(self, args):
+    def __init__(self, args):  # , logger, save_manager
         self.args = args
+        logger.info("Trainer initializing")
+        # self.logger = logger
+        # self.save_manager = save_manager
         self.time = time.strftime("%Y%m%d-%H%M%S", time.localtime())
         self.running = False
-        self.use_wandb = args.use_wandb
 
-        if self.args.use_wandb:
-            self._init_wandb()
 
         self.device = torch.device(self.args.device)
         self._init_components()
 
-    def _init_wandb(self):
-        if not self.use_wandb:
-            return
-        text_in_box("Init Wandb", color="orange")
-        wandb.login()
-        wandb.init(project=self.args.experiment_name, name=self.args.run_name)
-        wandb.config.update(self.args)
 
     def _init_components(self):
-        print("Building dataloader...")
         self.train_loader, self.val_loader = self.build_dataloader()
+        logger.info("Dataloader built")
         print("Building model...")  #
         self.model = self.build_model().to(self.device)
+        logger.info("Model built")
         print("Building trainer...")
         self.criterion = self.build_criterion()
         self.optimizer = self.build_optimizer()
@@ -89,7 +83,7 @@ class BasicTrainer(ABC):
             self.epoch = epoch
             text_in_box(f"Epoch {epoch}", color="white")
             log = self.run_epoch()
-            self.log_metrics(log)
+            save_manager.log_metrics(log, step=self.epoch)
 
     def log_metrics(self, data):
         if not isinstance(data, dict):
@@ -99,50 +93,18 @@ class BasicTrainer(ABC):
                 data = {data[0]: data[1]}
             else:
                 raise ValueError("data should be dict or list or tuple")
-        if self.use_wandb:
-            wandb.log(data, step=self.epoch, commit=True)
+        
         print(data)
-
-    def log_plot(self, x, y, title=None, columns=None, name="plot"):
-        if columns is None:
-            columns = ["x", "y"]
-        data = list(zip(x, y))
-        if self.use_wandb:
-            tabel = wandb.Table(columns=columns, data=data)
-            wandb.log(
-                {name: wandb.plot.line(tabel, columns[0], columns[1])},
-                step=self.epoch,
-                commit=True,
-                title=title,
-            )
-
-    def log_img(self, data, caption=None):
-        if isinstance(data, torch.Tensor):
-            data = data.cpu().numpy()
-        if self.use_wandb:
-            wandb.log({caption: [wandb.Image(data)]}, step=self.epoch, commit=True)
-        else:
-            # 保存到本地
-            pass
-
-    def log_tabel(self, data: list, columns=None, name="table"):
-        if self.use_wandb:
-            tabel = wandb.Table(columns=columns, data=data)
-            wandb.log({name: tabel}, step=self.epoch, commit=True)
 
     def run(self):
         text_in_box(f"Start Run train {self.args.run_name}", color="orange")
         if self.args is None:
             raise ValueError("Please use parse_args first")
         self.__property_check()
-        if self.use_wandb:
-            wandb.config.update(self.args)
         self.running = True
         self.run_train()
 
         self.running = False
-        if self.use_wandb:
-            wandb.finish()
 
     def __property_check(self):
         # 检查所有属性的设值情况

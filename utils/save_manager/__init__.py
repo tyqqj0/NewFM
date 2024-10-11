@@ -23,6 +23,7 @@ from .save_manager_local import LocalSaveManager
 
 def get_save_manager(config):
     #TODO: 这个部分逻辑需要重新想
+    # 这块先这样写，后面加上了其他save_manager再改，要加选项冲突检查
     if config.use_wandb:
         return WandbSaveManager(config)
     else:
