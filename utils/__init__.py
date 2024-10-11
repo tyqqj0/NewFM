@@ -33,19 +33,14 @@ _save_manager = None
 def initialize_utils(args):
     global _logger, _save_manager
 
-    # Process configuration
-    config = process_config(args)
-
     # Check and create necessary directories
-    process_dirs(config)
+    process_dirs(args)
 
     # Initialize logger
-    _logger = get_logger(config)
+    _logger = get_logger(args)
 
     # Initialize save manager
-    _save_manager = get_save_manager(config)
-
-    return config
+    _save_manager = get_save_manager(args)
 
 
 class LoggerProxy:

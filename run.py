@@ -11,25 +11,28 @@ from utils import logger, cprint, initialize_utils, save_manager
 from coqpit import Coqpit
 
 
-def main(config: str, arg_dict: dict = None):
+def main(config_file: str, arg_dict: dict = None):
     # config = "config/users/Resnet18_CIFAR10_Supervised.py"
-    args = utils.process_config(config)
+    # logger.info("Start running")
+    # logger.info(f"Loading config from {config_file}")
+    args = utils.process_config(config_file)
     if arg_dict is not None:
         args.update(arg_dict)
 
     # process dirs
-    utils.process_dirs(args)
-    cprint("Configuration file processed successfully", "green")
+    # utils.process_dirs(args)
+    # cprint("Configuration file processed successfully", "green")
 
+    # logger.info("Configuration file processed successfully")
     # print args
     args.pprint()
 
     # initialize utils
-    utils.initialize_utils(args)
+    initialize_utils(args)
     logger.info("Utils initialized")
     logger.info("Logger initialized")
-    cprint("Utils initialized", "green")
-    cprint("Logger initialized", "green")
+    # cprint("Utils initialized", "green")
+    # cprint("Logger initialized", "green")
 
     # run Trainer
     # TODO: Trainer

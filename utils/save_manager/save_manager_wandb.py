@@ -31,7 +31,9 @@ from .save_manager_base import BaseSaveManager
 class WandbSaveManager(BaseSaveManager):
     def __init__(self, config):
         wandb.login()
-        wandb.init(project=config.experiment_name, name=config.run_name)
+        # TODO: 设置wandb的存储路径
+        # os.environ["WANDB_DIR"] = config.base_dir
+        wandb.init(project=config.project_name, name=config.run_name)
         wandb.config.update(vars(config))
         self.use_wandb = True
 

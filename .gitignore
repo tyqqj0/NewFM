@@ -8,3 +8,6 @@ config/configs/basic/__pycache__/Basic.cpython-310.pyc
 
 # 忽略所有名为 __pycache__ 的文件夹
 __pycache__/
+
+# wandb
+wandb/
