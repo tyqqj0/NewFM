@@ -63,7 +63,10 @@ class BasicTrainer(ABC):
             return torch.device("cpu")
 
     def _init_components(self):
-        self.train_loader, self.val_loader = self.build_dataloader()
+        self.train_loader, self.val_loader, self.loaders = self.build_dataloader()
+        # check loader, loaders should be dict or None
+        if self.loaders is not None and not isinstance(self.loaders, dict):
+            raise ValueError("loaders should be a dict or None")
         logger.info("Dataloader built")
         self.model = self.build_model().to(self.device)
         logger.info("Model built")
@@ -76,7 +79,7 @@ class BasicTrainer(ABC):
         self.epochs = self.build_epochs()
         logger.info("Epochs built")
         self.epoch = 0
-        self.max_epoch = self.args.max_epoch
+        self.max_epoch = self.args.max_epochs
 
     @abstractmethod
     def build_dataloader(self):
@@ -112,7 +115,8 @@ class BasicTrainer(ABC):
             text_in_box(f"Epoch {epoch}", color="white")
             logger.info(f"Epoch {epoch} start")
             log = self.run_epoch()
-            save_manager.log_metrics(log, step=self.epoch)
+            save_manager.step = self.epoch + 1 # This will automatically commit the logs
+            # save_manager.log_metrics(log, step=self.epoch)
 
     def run(self):
         text_in_box(

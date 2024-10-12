@@ -17,3 +17,5 @@ class Config(Coqpit):
     fc : bool = field(default=True, metadata={'help': 'fc'})
     dropout : float = field(default=0.5, metadata={'help': 'dropout'})
     batch_norm : bool = field(default=True, metadata={'help': 'batch norm'})
+    step_size : int = field(default=7, metadata={'help': 'step size'})
+    gamma : float = field(default=0.1, metadata={'help': 'gamma'})

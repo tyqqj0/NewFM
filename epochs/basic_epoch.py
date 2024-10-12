@@ -24,7 +24,6 @@ from utils import logger
 class BasicEpoch(ABC):
     def __init__(self, name, loader, trainer, color="white", bar=True):
         self.name = name
-        self.epoch_count = 0
         self.task = trainer
         self.model = trainer.model
         self.criterion = trainer.criterion
@@ -37,8 +36,13 @@ class BasicEpoch(ABC):
         self.loader_oringinal = loader
         self.loader = loader
 
+    @property
+    def epoch_count(self):
+        return self.task.epoch
+
+
+
     def run(self):
-        self.epoch_count = self.epoch_count + 1
         text_in_box(f"{self.name} epoch {self.task.epoch}", color=self.color)
         logger.info(f"{self.name} epoch {self.task.epoch} start")
         if self.bar:
@@ -52,8 +56,8 @@ class BasicEpoch(ABC):
             logger.error(f"{self.name} epoch return value must be a dict")
             raise ValueError(f"{self.name} epoch return value must be a dict")
         self.after_epoch(result)
-        if self.bar:
-            self.loader.close()
+        # if self.bar:
+            # self.loader.finish()
         logger.info(f"{self.name} epoch {self.task.epoch} end")
         return result
 

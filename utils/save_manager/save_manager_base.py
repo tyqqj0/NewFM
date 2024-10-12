@@ -9,6 +9,7 @@
 """
 
 from abc import ABC, abstractmethod
+from typing import Optional
 import torch
 import os
 import sys
@@ -26,6 +27,31 @@ from torch import nn
 
 
 class BaseSaveManager(ABC):
+    def __init__(self):
+        self.__step = 1
+
+    @property
+    def step(self):
+        return self.__step
+
+    @step.setter
+    def step(self, value):
+        if not isinstance(value, int):
+            raise ValueError(f"Step must be an integer, got {type(value)}")
+        if value is not None:
+            if value == self.__step:
+                return
+            elif value > self.__step:
+                print(f"Committing logs at step {self.__step}")
+                self.commit()
+                self.__step = value
+            else:
+                raise ValueError(f"Step must be equal or greater than current step {self.__step}, got {value}")
+
+    @abstractmethod
+    def commit(self):
+        pass
+
     @abstractmethod
     def log_metrics(self, data, step=None):
         pass
@@ -52,7 +78,51 @@ class BaseSaveManager(ABC):
 
     def _process_tensor(self, tensor) -> np.ndarray:
         """将PyTorch张量转换为NumPy数组"""
-        return tensor.detach().cpu().numpy()
+        tensor = tensor.detach().cpu().numpy()
+        # check type, convert to float if possible
+        if tensor.dtype == np.float32:
+            tensor = tensor.astype(np.float64)
+
+        # if type is int, convert to float
+        if tensor.dtype == np.int32:
+            tensor = tensor.astype(np.float64)
+
+        return tensor
+    
+    def _process_2d_tensor(self, tensor) -> np.ndarray:
+        tensor = self._process_tensor(tensor)
+        if tensor.ndim == 2:
+            return tensor
+        else:
+            raise ValueError(f"Tensor must be 2D, got {tensor.ndim}D, {tensor.shape}")
+
+    def _process_tensor_auto(self, tensor):
+        tensor = self._process_tensor(tensor)
+        if tensor.ndim == 4:
+            if tensor.shape[0] == 1:
+                tensor = tensor.squeeze(0)
+            else:
+                raise ValueError(f"Tensor must be 3D with shape (3, H, W), got {tensor.shape}")
+        if tensor.ndim == 3:
+            if tensor.shape[0] == 3 or tensor.shape[0] == 1:
+                tensor = tensor.transpose(1, 2, 0)  # 将 (C, H, W) 转换为 (H, W, C)
+            
+            if tensor.shape[2] == 3 or tensor.shape[2] == 1:
+                return tensor
+            else:
+                raise ValueError(f"Tensor must be 3D with shape (3, H, W) or (H, W, 1), got {tensor.shape}")
+            # return tensor
+        elif tensor.ndim == 2:
+            return tensor
+        elif tensor.ndim == 1:
+            if tensor.shape[0] == 1:
+                return tensor.squeeze(0).item()
+            else:
+                raise ValueError(f"Tensor 1D must be with shape (1,1), got {tensor.shape}")
+        elif tensor.ndim == 0:
+            return tensor.item()
+        else:
+            raise ValueError(f"Tensor must be 2D or 3D, got {tensor.ndim}D, {tensor.shape}")
 
     def _process_dict(self, data) -> dict:
         """处理字典类型的数据,将PyTorch张量转换为NumPy数组"""

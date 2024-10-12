@@ -7,7 +7,7 @@
 
 
 import utils
-from utils import logger, cprint, initialize_utils, save_manager
+from utils import logger, cprint, initialize_utils, save_manager, text_in_box
 from coqpit import Coqpit
 from trainers import get_trainer_class
 
@@ -18,7 +18,9 @@ def main(config_file: str, arg_dict: dict = None):
     if arg_dict is not None:
         args.update(arg_dict)
 
-    # args.pprint()
+
+    text_in_box(f"Config:", color="orange")
+    args.pprint()
 
     # initialize utils
     initialize_utils(args)
@@ -34,12 +36,12 @@ def main(config_file: str, arg_dict: dict = None):
         return
 
     trainer = Trainer(args)
-    trainer.train()
+    trainer.run()
 
     return
 
 
 if __name__ == "__main__":
-    config = "users/Example.py"
+    config = "users/Resnet18_CIFAR10_Supervised.py"
     main(config)
-# comparison = 1
+    # comparison = 1

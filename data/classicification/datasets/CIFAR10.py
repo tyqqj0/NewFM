@@ -21,7 +21,7 @@ import json
 
 class CIFAR10Dataset(datasets.CIFAR10):
     def __init__(self, root, train=True, download=True, transform=None):
-        super().__init__(root, train, download, transform)
+        super().__init__(root=root, train=train, download=download, transform=transform)
 
     def __getitem__(self, index):
         image, target = super().__getitem__(index)

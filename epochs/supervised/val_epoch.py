@@ -48,10 +48,11 @@ class ValEpoch(BasicEpoch):
                 correct_meter.update(torch.sum(preds == targets).item(), inputs.size(0))
 
         result = {
-            "loss": loss_meter.item,
-            "accuracy": correct_meter.item,
+            "val_loss": loss_meter.item(),
+            "val_accuracy": correct_meter.item(),
         }
         return result
 
     def after_epoch(self, result: dict):
-        save_manager.log_metrics(result)
+        print(f"Epoch {self.epoch_count} result: {result}")
+        save_manager.log_metrics(result, step=self.epoch_count)

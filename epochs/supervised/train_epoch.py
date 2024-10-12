@@ -57,7 +57,8 @@ class TrainEpoch(BasicEpoch):
         avg_loss = loss_meter.item()
         avg_accuracy = correct_meter.item()
 
-        return {"loss": avg_loss, "accuracy": avg_accuracy}
+        return {"train_loss": avg_loss, "train_accuracy": avg_accuracy}
 
     def after_epoch(self, result: dict):
-        save_manager.log_metrics(result)
+        print(f"Epoch {self.epoch_count} result: {result}")
+        save_manager.log_metrics(result, step=self.epoch_count)

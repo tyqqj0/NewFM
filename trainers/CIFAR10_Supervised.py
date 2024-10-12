@@ -41,18 +41,25 @@ class CIFAR10_Supervised(BasicTrainer):
         val_transform = CIFAR10_transform(train=False)
 
         train_dataset = CIFAR10Dataset(
-            root=self.args.data_path, train=True, transform=train_transform
+            root=self.args.data_path,
+            train=True,
+            transform=train_transform,
+            download=self.args.download,
         )
         val_dataset = CIFAR10Dataset(
-            root=self.args.data_path, train=False, transform=val_transform
+            root=self.args.data_path,
+            train=False,
+            transform=val_transform,
+            download=self.args.download,
         )
 
         train_loader = DataLoader(
             train_dataset, batch_size=self.args.batch_size, shuffle=True
         )
         val_loader = DataLoader(val_dataset, batch_size=self.args.batch_size)
+        vis_loader = DataLoader(val_dataset, batch_size=1)
 
-        return train_loader, val_loader
+        return train_loader, val_loader, {"vis": vis_loader}
 
     def build_model(self):
         return resnet18(num_classes=self.args.num_classes)
@@ -68,14 +75,31 @@ class CIFAR10_Supervised(BasicTrainer):
 
     def build_epochs(self):
         train_epoch = TrainEpoch(
-            self.model, self.criterion, self.optimizer, self.scheduler, self.device
+            name="train",
+            loader=self.train_loader,
+            trainer=self,
+            color="blue",
+            bar=True,
         )
-        val_epoch = ValEpoch(self.model, self.criterion, self.device)
-        image_2d_epoch = Image2DEpoch(self.model, self.device)
+        val_epoch = ValEpoch(
+            name="val",
+            loader=self.val_loader,
+            trainer=self,
+            color="green",
+            bar=True,
+        )
+        image_2d_epoch = Image2DEpoch(
+            name="image_2d",
+            loader=self.loaders["vis"],
+            trainer=self,
+            color="red",
+            bar=False,
+            max_samples=3,
+        )
 
         epochs = {"train": train_epoch, "val": val_epoch, "image_2d": image_2d_epoch}
         return epochs
 
     def run_epoch(self):
         for phase in ["train", "val", "image_2d"]:
-            self.epochs[phase].run(self.data_loaders[phase])
+            self.epochs[phase].run()

@@ -32,20 +32,26 @@ class Image2DEpoch(BasicEpoch):
     def epoch(self):
         self.model.eval()
 
-        results = [[], [], []]
-        for _ in range(self.max_samples):
-            inputs, targets, _ = next(iter(self.loader))
+        results = [[], [], [], []]
+        for i, (inputs, targets, _) in enumerate(self.loader):
+            if i >= self.max_samples:
+                break
             inputs = inputs.to(self.device)
             targets = targets.to(self.device)
 
             output = self.model(inputs)
             preds = output.argmax(dim=1)
 
-            results[0].append(inputs)
-            results[1].append(targets)
-            results[2].append(preds)
+            # shape from (1, C, H, W) to (H, W, C)
+            results[0].append(self.epoch_count)
+            results[1].append(inputs.cpu().squeeze(0).permute(1, 2, 0))
+            results[2].append(targets.cpu().squeeze(0))
+            results[3].append(preds.cpu().squeeze(0))
+            
 
-        return results
+        return {"results": results}
 
     def after_epoch(self, result: dict):
-        save_manager.log_images(result, ["inputs", "targets", "preds"])
+        save_manager.log_images(
+            data=result["results"], columns=["epoch", "inputs", "targets", "preds"], name=self.name, step=self.epoch_count
+        )

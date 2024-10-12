@@ -20,5 +20,5 @@ class Config(Coqpit):
     pin_memory: bool = field(default=True, metadata={"help": "pin memory"})
     shuffle: bool = field(default=True, metadata={"help": "shuffle"})
     drop_last: bool = field(default=False, metadata={"help": "drop last"})
-    download: bool = field(default=False, metadata={"help": "download"})
-    data_path: str = field(default="Data", metadata={"help": "data path"})
+    download: bool = field(default=True, metadata={"help": "download"})
+    data_path: str = field(default="/home/kevin/data", metadata={"help": "data path"})
