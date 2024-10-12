@@ -96,7 +96,10 @@ class BasicTrainer(ABC):
             save_manager.log_metrics(log, step=self.epoch)
 
     def run(self):
-        text_in_box(f"Start Run train {self.args.run_name}", color="orange")
+        text_in_box(
+            f"Start Run train {self.args.run_name}, max_epoch: {self.max_epoch}",
+            color="orange",
+        )
         if self.args is None:
             raise ValueError("Please use parse_args first")
         self.__property_check()

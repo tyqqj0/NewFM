@@ -39,6 +39,8 @@ class Config(Coqpit):
     log_dir: str = field(default="None")
     model_dir: str = field(default="None")
 
+    config_file_path: str = field(default="", metadata={"help": "配置文件的路径"})
+
     def __post_init__(self):
         super().__post_init__()
         self._update_dirs()
@@ -82,13 +84,19 @@ class Config(Coqpit):
     # def is_parsed(self):
     #     self._is_parsed = True
 
+    def get_config_file_link(self) -> str:
+        if not self.config_file_path:
+            return "配置文件路径未设置"
+        
+        abs_config_path = os.path.abspath(self.config_file_path)
+        return f"\033]8;;file://{abs_config_path}\033\\{abs_config_path}\033]8;;\033\\"
+
+    def set_config_file_path(self, path: str):
+        self.config_file_path = path
+
     def __setattr__(self, name: str, value: Any) -> None:
-        # if self._is_parsed and name in ['project_name', 'run_name', 'base_dir']:
-        #     raise AttributeError(f"Cannot modify {name} after configuration has been parsed.")
         super().__setattr__(name, value)
         if name in ["project_name", "run_name", "base_dir"]:
-            # self._is_parsed = False
-            # self._update_dirs()
             self.check_values()
 
     def __getattr__(self, item):

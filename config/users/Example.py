@@ -3,12 +3,14 @@
 # @Author tyqqj
 # @File Resnet18_CIFAR10_Supervised.py
 # @
-# @Aim 
+# @Aim
 
 
 from coqpit import Coqpit
+
 # from attr import dataclass
 from dataclasses import asdict, dataclass, field
+
 # from ..configs.basic import Basic
 # from ..configs.data import CIFAR10
 # from ..configs.model import Resnet18
@@ -17,7 +19,7 @@ from dataclasses import asdict, dataclass, field
 configs = [
     "configs/data/CIFAR10.py",
     "configs/model/Resnet18.py",
-    "configs/training/Supervised.py"
+    "configs/training/Supervised.py",
 ]
 
 
@@ -34,9 +36,8 @@ configs = [
 class Config(Coqpit):
     trainer: str = "Resnet18_CIFAR_Supervised.py"
     project_name: str = "Example"
-    use_wandb: bool = True
+    use_wandb: bool = False
 
 
 if __name__ == "__main__":
     print(Config())
-
