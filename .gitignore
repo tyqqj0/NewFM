@@ -11,3 +11,6 @@ __pycache__/
 
 # wandb
 wandb/
+
+# runs
+runs/

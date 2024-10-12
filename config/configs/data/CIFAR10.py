@@ -3,19 +3,22 @@
 # @Author tyqqj
 # @File CIFAR10.py
 # @
-# @Aim 
+# @Aim
 
 
 from coqpit import Coqpit
 from dataclasses import asdict, dataclass, field
+
 # from attr import dataclass, field
+
 
 @dataclass
 class Config(Coqpit):
-    max_data : int = field(default=10000, metadata={'help': 'max number of data'})
-    batch_size : int = field(default=64, metadata={'help': 'batch size'})
-    num_workers : int = field(default=0, metadata={'help': 'number of workers'})
-    pin_memory : bool = field(default=True, metadata={'help': 'pin memory'})
-    shuffle : bool = field(default=True, metadata={'help': 'shuffle'})
-    drop_last : bool = field(default=False, metadata={'help': 'drop last'})
-    download : bool = field(default=False, metadata={'help': 'download'})
+    max_data: int = field(default=10000, metadata={"help": "max number of data"})
+    batch_size: int = field(default=64, metadata={"help": "batch size"})
+    num_workers: int = field(default=0, metadata={"help": "number of workers"})
+    pin_memory: bool = field(default=True, metadata={"help": "pin memory"})
+    shuffle: bool = field(default=True, metadata={"help": "shuffle"})
+    drop_last: bool = field(default=False, metadata={"help": "drop last"})
+    download: bool = field(default=False, metadata={"help": "download"})
+    data_path: str = field(default="Data", metadata={"help": "data path"})

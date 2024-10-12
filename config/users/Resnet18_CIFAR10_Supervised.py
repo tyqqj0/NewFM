@@ -34,7 +34,7 @@ configs = [
 # project: The name of the project, whether to use Weights and Biases for logging
 @dataclass
 class Config(Coqpit):
-    trainer: str = "CIFAR10_Supervised.py"
+    trainer: str = "CIFAR10_Supervised"
     project_name: str = "Resnet18_CIFAR10_Supervised"
     use_wandb: bool = True
 

@@ -18,7 +18,7 @@ def main(config_file: str, arg_dict: dict = None):
     if arg_dict is not None:
         args.update(arg_dict)
 
-    args.pprint()
+    # args.pprint()
 
     # initialize utils
     initialize_utils(args)
@@ -28,7 +28,9 @@ def main(config_file: str, arg_dict: dict = None):
     # run Trainer
     Trainer = get_trainer_class(args.trainer)
     if Trainer is None:
-        logger.error(f"Trainer '{args.trainer}' not found. Please check config_file: file://{config_file}")
+        logger.error(
+            f"Trainer '{args.trainer}' not found. Please check config_file: {args.get_config_file_link()}"
+        )
         return
 
     trainer = Trainer(args)

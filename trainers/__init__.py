@@ -45,6 +45,9 @@ for filename in os.listdir(current_dir):
 
 # 定义工厂函数，根据名称返回对应的trainer类
 def get_trainer_class(trainer_name) -> Optional[BasicTrainer]:
+    # if end with .py
+    if trainer_name.endswith(".py"):
+        trainer_name = trainer_name[:-3]
     trainer = trainer_dict.get(trainer_name, None)
     if trainer is None:
         print(

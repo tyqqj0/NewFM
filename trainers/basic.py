@@ -33,15 +33,34 @@ class BasicTrainer(ABC):
         self.time = time.strftime("%Y%m%d-%H%M%S", time.localtime())
         self.running = False
 
-        self.device = torch.device(self.args.device)
-        if self.device.type == "cuda":
-            logger.info(f"CUDA is available, using GPU {self.device.index}")
-        else:
-            logger.warning(f"CUDA is not available, using CPU")
+        self.device = self._init_device()
 
         self._init_components()
         logger.info("Trainer initialized")
         text_in_box(f"Init run {self.args.run_name} Done", color="orange")
+
+    def _init_device(self):
+        if not torch.cuda.is_available():
+            logger.warning("CUDA is not available, using CPU")
+            return torch.device("cpu")
+
+        if self.args.device.startswith("cuda"):
+            try:
+                device_index = (
+                    int(self.args.device.split(":")[-1])
+                    if ":" in self.args.device
+                    else 0
+                )
+                device = torch.device(f"cuda:{device_index}")
+                torch.cuda.set_device(device)
+                logger.info(f"CUDA is available, using GPU {device_index}")
+                return device
+            except RuntimeError as e:
+                logger.warning(f"Error setting CUDA device: {e}. Falling back to CPU.")
+                return torch.device("cpu")
+        else:
+            logger.info("Device set to CPU in configuration")
+            return torch.device("cpu")
 
     def _init_components(self):
         self.train_loader, self.val_loader = self.build_dataloader()

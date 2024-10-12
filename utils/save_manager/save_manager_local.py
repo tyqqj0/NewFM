@@ -29,8 +29,12 @@ class LocalSaveManager(BaseSaveManager):
     def __init__(self, config):
         self.log_dir = config.log_dir
         self.run_name = config.run_name
-        self.log_file = open(os.path.join(self.log_dir, f"{self.run_name}_log.txt"), "a")
-        self.metrics_file = open(os.path.join(self.log_dir, f"{self.run_name}_metrics.csv"), "a")
+        self.log_file = open(
+            os.path.join(self.log_dir, f"{self.run_name}_log.txt"), "a"
+        )
+        self.metrics_file = open(
+            os.path.join(self.log_dir, f"{self.run_name}_metrics.csv"), "a"
+        )
         self.metrics_writer = csv.writer(self.metrics_file)
         self.metrics_writer.writerow(["step", "metric", "value"])  # 写入CSV文件的表头
         self.use_wandb = False
@@ -42,7 +46,9 @@ class LocalSaveManager(BaseSaveManager):
         for metric, value in data.items():
             self.metrics_writer.writerow([step, metric, value])
 
-            metric_file = open(os.path.join(self.log_dir, f"{self.run_name}_{metric}.md"), "a")
+            metric_file = open(
+                os.path.join(self.log_dir, f"{self.run_name}_{metric}.md"), "a"
+            )
             metric_file.write(f"## Step {step}\n")
             metric_file.write(f"- {metric}: {value}\n\n")
             metric_file.close()
@@ -52,7 +58,10 @@ class LocalSaveManager(BaseSaveManager):
             columns = ["x", "y"]
 
         data = pd.DataFrame({columns[0]: x, columns[1]: y})
-        data.to_csv(os.path.join(self.log_dir, f"{self.run_name}_{name}_{step}.csv"), index=False)
+        data.to_csv(
+            os.path.join(self.log_dir, f"{self.run_name}_{name}_{step}.csv"),
+            index=False,
+        )
 
         plt.figure()
         plt.plot(x, y)
@@ -75,6 +84,10 @@ class LocalSaveManager(BaseSaveManager):
         plt.tight_layout()
         plt.savefig(os.path.join(self.log_dir, f"{self.run_name}_image_{step}.png"))
         plt.close()
+
+    def log_images(self, data, caption=None, step=None):
+        for i, image in enumerate(data):
+            self.log_image(image, caption=caption[i] if caption else None, step=step)
 
     def log_table(self, data, columns=None, name="table", step=None):
         data = self._process_dict(data)

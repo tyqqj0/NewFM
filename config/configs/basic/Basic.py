@@ -39,7 +39,9 @@ class Config(Coqpit):
     log_dir: str = field(default="None")
     model_dir: str = field(default="None")
 
-    config_file_path: str = field(default="", metadata={"help": "配置文件的路径"})
+    config_file_path: str = field(
+        default="", metadata={"help": "Path to the configuration file"}
+    )
 
     def __post_init__(self):
         super().__post_init__()
@@ -86,8 +88,8 @@ class Config(Coqpit):
 
     def get_config_file_link(self) -> str:
         if not self.config_file_path:
-            return "配置文件路径未设置"
-        
+            return "Config file path not set"
+
         abs_config_path = os.path.abspath(self.config_file_path)
         return f"\033]8;;file://{abs_config_path}\033\\{abs_config_path}\033]8;;\033\\"
 
@@ -102,7 +104,15 @@ class Config(Coqpit):
     def __getattr__(self, item):
         if item in ["project_name", "run_name", "base_dir"]:
             self._update_dirs()
-        return super().__getattribute__(item)
+        try:
+            return super().__getattribute__(item)
+        except AttributeError as e:
+            config_link = self.get_config_file_link()
+            additional_info = (
+                f"\nAdditional info: This error might be due to a missing or incorrect "
+                f"configuration. Please check the configuration file: {config_link}"
+            )
+            raise AttributeError(str(e) + additional_info) from None
 
 
 if __name__ == "__main__":
