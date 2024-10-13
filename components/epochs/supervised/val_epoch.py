@@ -45,7 +45,9 @@ class ValEpoch(BasicEpoch):
                 loss_meter.update(loss.item(), inputs.size(0))
 
                 preds = outputs.argmax(dim=1)
-                correct_meter.update(torch.sum(preds == targets).item())
+                correct_meter.update(
+                    torch.sum(preds == targets).item() / inputs.size(0)
+                )
 
         result = {
             "val_loss": loss_meter.item(),

@@ -47,7 +47,7 @@ class TrainEpoch(BasicEpoch):
 
             # update the total correct and total samples
             _, predicted = torch.max(outputs, 1)
-            correct_meter.update((predicted == targets).sum().item())
+            correct_meter.update((predicted == targets).sum().item() / targets.size(0))
 
             # backward
             self.optimizer.zero_grad()
