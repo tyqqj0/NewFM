@@ -14,14 +14,15 @@ import os
 import sys
 
 # 添加项目根目录到 Python 路径
-project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.insert(0, project_dir)
 
 import run  # 导入 run.py 模块
 
 
 def main():
-    # wandb 会自动初始化，无需显式调用 wandb.init()
+    # wandb.init()
+    wandb.init()
     # 从 wandb.config 获取参数
     config_dict = dict(wandb.config)
     # 调用 run.py 中的 main 函数
