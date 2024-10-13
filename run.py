@@ -6,23 +6,23 @@
 # @Aim
 
 
-import utils
-from utils import logger, cprint, initialize_utils, save_manager, text_in_box
+import core
+from core import logger, initialize_utils, save_manager, text_in_box
+from utils import cprint
 from coqpit import Coqpit
 from trainers import get_trainer_class
 
 
 def main(config_file: str, arg_dict: dict = None):
-    # config = "config/users/Resnet18_CIFAR10_Supervised.py"
-    args = utils.process_config(config_file)
+    # config = "config/experiments/resnet18_cifar10_supervised.py"
+    args = core.process_config(config_file)
     if arg_dict is not None:
         args.update(arg_dict)
-
 
     text_in_box(f"Config:", color="orange")
     args.pprint()
 
-    # initialize utils
+    # initialize core
     initialize_utils(args)
     logger.info("Utils initialized")
     logger.info("Logger initialized")
@@ -42,6 +42,13 @@ def main(config_file: str, arg_dict: dict = None):
 
 
 if __name__ == "__main__":
-    config = "users/Resnet18_CIFAR10_Supervised.py"
-    main(config)
+    config = "experiments/resnet18_cifar10_supervised.py"
+    # parse config file path
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=str, default=config)
+    args = parser.parse_known_args()
+
+    main(args.config)
     # comparison = 1

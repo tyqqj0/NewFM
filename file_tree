@@ -1,0 +1,105 @@
+NewFM
+ ┣ bash
+ ┃ ┣ pull.sh
+ ┃ ┗ train.sh
+ ┣ config
+ ┃ ┣ configs
+ ┃ ┃ ┣ basic
+ ┃ ┃ ┃ ┗ Basic.py
+ ┃ ┃ ┣ data
+ ┃ ┃ ┃ ┣ CIFAR10.py
+ ┃ ┃ ┃ ┗ CIFAR10_noisy.py
+ ┃ ┃ ┣ model
+ ┃ ┃ ┃ ┗ Resnet18.py
+ ┃ ┃ ┗ training
+ ┃ ┃ ┃ ┗ Supervised.py
+ ┃ ┗ users
+ ┃ ┃ ┣ Example.py
+ ┃ ┃ ┣ Resnet18_CIFAR10_noisy_Supervised .py
+ ┃ ┃ ┗ Resnet18_CIFAR10_Supervised.py
+ ┣ data
+ ┃ ┣ classicification
+ ┃ ┃ ┣ datasets
+ ┃ ┃ ┃ ┣ __pycache__
+ ┃ ┃ ┃ ┃ ┗ CIFAR10.cpython-310.pyc
+ ┃ ┃ ┃ ┣ CIFAR10.py
+ ┃ ┃ ┃ ┗ CIFAR10_noisy.py
+ ┃ ┃ ┣ __pycache__
+ ┃ ┃ ┃ ┗ __init__.cpython-310.pyc
+ ┃ ┃ ┗ __init__.py
+ ┃ ┣ segmentation
+ ┃ ┃ ┗ datasets
+ ┃ ┗ datasets.py
+ ┣ epochs
+ ┃ ┣ noisy
+ ┃ ┃ ┗ train_epoch_noisy.py
+ ┃ ┣ supervised
+ ┃ ┃ ┣ __pycache__
+ ┃ ┃ ┃ ┣ train_epoch.cpython-310.pyc
+ ┃ ┃ ┃ ┣ val_epoch.cpython-310.pyc
+ ┃ ┃ ┃ ┗ __init__.cpython-310.pyc
+ ┃ ┃ ┣ train_epoch.py
+ ┃ ┃ ┣ val_epoch.py
+ ┃ ┃ ┗ __init__.py
+ ┃ ┣ visulization
+ ┃ ┃ ┣ __pycache__
+ ┃ ┃ ┃ ┣ image_2d_epoch.cpython-310.pyc
+ ┃ ┃ ┃ ┗ __init__.cpython-310.pyc
+ ┃ ┃ ┣ image_2d_epoch.py
+ ┃ ┃ ┗ __init__.py
+ ┃ ┣ __pycache__
+ ┃ ┃ ┗ basic_epoch.cpython-310.pyc
+ ┃ ┗ basic_epoch.py
+ ┣ models
+ ┃ ┣ classicification
+ ┃ ┃ ┣ __pycache__
+ ┃ ┃ ┃ ┣ resnet18.cpython-310.pyc
+ ┃ ┃ ┃ ┗ __init__.cpython-310.pyc
+ ┃ ┃ ┣ resnet18.py
+ ┃ ┃ ┗ __init__.py
+ ┃ ┗ segmentation
+ ┣ trainers
+ ┃ ┣ __pycache__
+ ┃ ┃ ┣ basic.cpython-310.pyc
+ ┃ ┃ ┣ CIFAR10_Supervised.cpython-310.pyc
+ ┃ ┃ ┗ __init__.cpython-310.pyc
+ ┃ ┣ basic.py
+ ┃ ┣ CIFAR10_Supervised.py
+ ┃ ┣ CIFAR10_Supervised_noisy.py
+ ┃ ┗ __init__.py
+ ┣ utils
+ ┃ ┣ config_processor
+ ┃ ┃ ┣ __pycache__
+ ┃ ┃ ┃ ┗ processor.cpython-310.pyc
+ ┃ ┃ ┣ config_check.py
+ ┃ ┃ ┗ processor.py
+ ┃ ┣ metrics
+ ┃ ┃ ┣ __pycache__
+ ┃ ┃ ┃ ┗ average_meter.cpython-310.pyc
+ ┃ ┃ ┗ average_meter.py
+ ┃ ┣ save_manager
+ ┃ ┃ ┣ __pycache__
+ ┃ ┃ ┃ ┣ save_manager_base.cpython-310.pyc
+ ┃ ┃ ┃ ┣ save_manager_local.cpython-310.pyc
+ ┃ ┃ ┃ ┣ save_manager_wandb.cpython-310.pyc
+ ┃ ┃ ┃ ┗ __init__.cpython-310.pyc
+ ┃ ┃ ┣ save_manager_base.py
+ ┃ ┃ ┣ save_manager_local.py
+ ┃ ┃ ┣ save_manager_wandb.py
+ ┃ ┃ ┗ __init__.py
+ ┃ ┣ visulization
+ ┃ ┣ __pycache__
+ ┃ ┃ ┣ dir_processor.cpython-310.pyc
+ ┃ ┃ ┣ log.cpython-310.pyc
+ ┃ ┃ ┣ paths.cpython-310.pyc
+ ┃ ┃ ┣ text.cpython-310.pyc
+ ┃ ┃ ┗ __init__.cpython-310.pyc
+ ┃ ┣ dir_processor.py
+ ┃ ┣ log.py
+ ┃ ┣ paths.py
+ ┃ ┣ text.py
+ ┃ ┗ __init__.py
+ ┣ .gitignore
+ ┣ requirements.txt
+ ┣ run.py
+ ┗ sweep.py
