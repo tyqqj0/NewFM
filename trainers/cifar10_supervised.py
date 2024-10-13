@@ -15,7 +15,7 @@ from components.epochs.visualization import Image2DEpoch
 from components.epochs.supervised import TrainEpoch
 from components.epochs.supervised import ValEpoch
 from components.models.classification.resnet18 import (
-    resnet18,
+    ResNet18,
     get_criterion,
     get_optimizer,
     get_scheduler,
@@ -62,7 +62,7 @@ class CIFAR10_Supervised(BasicTrainer):
         return train_loader, val_loader, {"vis": vis_loader}
 
     def build_model(self):
-        return resnet18(num_classes=self.args.num_classes)
+        return ResNet18(num_classes=self.args.num_classes)
 
     def build_criterion(self):
         return get_criterion(self.args)
