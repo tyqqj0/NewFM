@@ -1,0 +1,137 @@
+program: sweep.py
+method: bayes
+metric:
+  goal: minimize
+  name: val_loss
+parameters:
+  config_file_path:
+    values:
+      - /home/kevin/code/NewFM/config/users/Resnet18_CIFAR10_Supervised.py
+    distribution: categorical
+  save_interval:
+    max: 50
+    min: 50
+    distribution: int_uniform
+  weight_decay:
+    max: 0.001
+    min: 0.00025
+    distribution: uniform
+  project_name:
+    values:
+      - Resnet18_CIFAR10_Supervised
+    distribution: categorical
+  num_channels:
+    max: 3
+    min: 3
+    distribution: int_uniform
+  log_interval:
+    max: 5
+    min: 5
+    distribution: int_uniform
+  _initialized:
+    values:
+      - "false"
+    distribution: categorical
+  num_classes:
+    max: 10
+    min: 10
+    distribution: int_uniform
+  pretrained:
+    values:
+      - "false"
+    distribution: categorical
+  pin_memory:
+    values:
+      - "true"
+    distribution: categorical
+  max_epochs:
+    max: 50
+    min: 50
+    distribution: int_uniform
+  batch_size:
+    max: 256
+    min: 32
+    distribution: int_uniform
+  batch_norm:
+    values:
+      - "false"
+    distribution: categorical
+  use_wandb:
+    values:
+      - "true"
+    distribution: categorical
+  step_size:
+    max: 14
+    min: 4
+    distribution: int_uniform
+  model_dir:
+    values:
+      - "None"
+    distribution: categorical
+  drop_last:
+    values:
+      - "false"
+    distribution: categorical
+  data_path:
+    values:
+      - /home/kevin/data
+    distribution: categorical
+  run_name:
+    values:
+      - "None"
+    distribution: categorical
+  momentum:
+    max: 0.99
+    min: 0.0
+    distribution: uniform
+  max_data:
+    max: 20000
+    distribution: int_uniform
+  download:
+    values:
+      - "true"
+    distribution: categorical
+  base_dir:
+    values:
+      - /home/kevin/code/NewFM/runs
+    distribution: categorical
+  trainer:
+    values:
+      - CIFAR10_Supervised
+    distribution: categorical
+  sub_dir:
+    values:
+      - "None"
+    distribution: categorical
+  shuffle:
+    values:
+      - "true"
+    distribution: categorical
+  log_dir:
+    values:
+      - "None"
+    distribution: categorical
+  dropout:
+    max: 1
+    min: 0.25
+    distribution: uniform
+  device:
+    values:
+      - cuda
+    distribution: categorical
+  gamma:
+    max: 0.2
+    min: 0.05
+    distribution: uniform
+  seed:
+    max: 84
+    min: 21
+    distribution: int_uniform
+  lr:
+    max: 0.2
+    min: 0.05
+    distribution: uniform
+  fc:
+    values:
+      - "true"
+    distribution: categorical

@@ -8,6 +8,7 @@
 @Desc    :   None
 """
 
+import warnings
 import numpy as np
 import torch
 import os
@@ -31,11 +32,21 @@ from .save_manager_base import BaseSaveManager
 class WandbSaveManager(BaseSaveManager):
     def __init__(self, config):
         super().__init__()
-        # TODO: 设置wandb的存储路径，已完成
+        # 设置 wandb 的存储路径
         os.environ["WANDB_DIR"] = config.base_dir
-        wandb.login()
-        wandb.init(project=config.project_name, name=config.run_name)
-        wandb.config.update(vars(config))
+
+        # 检查 wandb 是否已经初始化
+        if wandb.run is None:
+            # 如果未初始化，则进行初始化
+            wandb.login()
+            wandb.init(project=config.project_name, name=config.run_name)
+            # 更新 wandb 的配置
+            wandb.config.update(vars(config))
+        else:
+            # 如果已初始化，避免二次初始化，直接更新配置
+            warnings.warn("wandb is already initialized, skip initialization")
+            wandb.config.update(vars(config))
+
         self.use_wandb = True
 
 

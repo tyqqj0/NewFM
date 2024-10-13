@@ -33,7 +33,7 @@ def main(config_file: str, arg_dict: dict = None):
         logger.error(
             f"Trainer '{args.trainer}' not found. Please check config_file: {args.get_config_file_link()}"
         )
-        return
+        return>
 
     trainer = Trainer(args)
     trainer.run()

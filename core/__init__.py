@@ -10,7 +10,6 @@ from .config_processor.processor import process_config
 from .dir_processor import process_dirs
 from .log import get_logger
 from .save_manager import get_save_manager
-from .metrics.average_meter import AverageMeter
 
 __all__ = [
     "PROJECT_ROOT",
@@ -19,7 +18,6 @@ __all__ = [
     "process_config",
     "process_dirs",
     "initialize_utils",
-    "AverageMeter",
 ]
 
 _logger = None

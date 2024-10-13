@@ -30,7 +30,7 @@ class AverageMeter:
         
     def update(self, val, n=1):
         self.val = val
-        self.sum += val * n
+        self.sum += val * n  # val 为批次平均值，n 为批次样本数量
         self.count += n
         self.avg = self.sum / self.count
         

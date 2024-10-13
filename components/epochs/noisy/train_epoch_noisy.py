@@ -14,7 +14,8 @@
 import torch
 
 from components.epochs.basic_epoch import BasicEpoch
-from core import logger, AverageMeter, save_manager
+from core import logger, save_manager
+from utils import AverageMeter
 
 # import os
 # import sys

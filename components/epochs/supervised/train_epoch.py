@@ -11,7 +11,8 @@
 import torch
 
 from components.epochs.basic_epoch import BasicEpoch
-from core import logger, AverageMeter, save_manager
+from core import logger, save_manager
+from utils import AverageMeter
 
 # import os
 # import sys
@@ -26,7 +27,6 @@ class TrainEpoch(BasicEpoch):
         super().__init__(
             name=name, loader=loader, trainer=trainer, color=color, bar=bar
         )
-    
 
     def epoch(self):
         self.model.train()
@@ -47,7 +47,7 @@ class TrainEpoch(BasicEpoch):
 
             # update the total correct and total samples
             _, predicted = torch.max(outputs, 1)
-            correct_meter.update((predicted == targets).sum().item(), targets.size(0))
+            correct_meter.update((predicted == targets).sum().item())
 
             # backward
             self.optimizer.zero_grad()

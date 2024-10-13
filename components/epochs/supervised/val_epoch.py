@@ -18,7 +18,7 @@ import torch
 # import numpy as np
 
 from core import logger, save_manager
-from core.metrics.average_meter import AverageMeter
+from utils import AverageMeter
 from components.epochs.basic_epoch import BasicEpoch
 
 
@@ -45,7 +45,7 @@ class ValEpoch(BasicEpoch):
                 loss_meter.update(loss.item(), inputs.size(0))
 
                 preds = outputs.argmax(dim=1)
-                correct_meter.update(torch.sum(preds == targets).item(), inputs.size(0))
+                correct_meter.update(torch.sum(preds == targets).item())
 
         result = {
             "val_loss": loss_meter.item(),
