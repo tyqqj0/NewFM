@@ -154,10 +154,14 @@ def process_config(config_path: str) -> Coqpit:
     config_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(config_module)
 
+    # Check if the module was imported successfully
+    if not config_module:
+        raise ImportError(f"Failed to import the config module from {config_path}")
+
     # Check for required attributes
-    if not hasattr(config_module, "base") or not hasattr(config_module, "Config"):
+    if not hasattr(config_module, "configs") or not hasattr(config_module, "Config"):
         raise AttributeError(
-            "Config file must contain 'base' list and 'Config' class"
+            "Config file must contain 'configs' list and 'Config' class"
         )
 
     configs: List[str] = config_module.configs

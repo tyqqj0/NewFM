@@ -7,8 +7,8 @@
 
 
 import core
-from core import logger, initialize_utils, save_manager, text_in_box
-from utils import cprint
+from core import logger, initialize_utils, save_manager
+from utils import cprint, text_in_box
 from coqpit import Coqpit
 from trainers import get_trainer_class
 
@@ -48,7 +48,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, default=config)
-    args = parser.parse_known_args()
+    args, unknown = parser.parse_known_args()
 
+    print("config:", args.config)
     main(args.config)
     # comparison = 1

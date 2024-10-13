@@ -12,4 +12,4 @@ import torch
 
 
 
-from text import text_in_box, cprint
+from .text import text_in_box, cprint

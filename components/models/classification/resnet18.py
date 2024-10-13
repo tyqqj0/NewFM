@@ -20,29 +20,30 @@ import json
 # import numpy as np
 
 
-class ResNet18(resnet18):
+class ResNet18(nn.Module):
     def __init__(self, num_classes):
-        super().__init__(num_classes=num_classes)
+        super().__init__()
+        self.model = resnet18(num_classes=num_classes)
 
     def forward(self, x):
         # return the output before fc and the final output
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
-        x = self.avgpool(x)
+        x = self.model.conv1(x)
+        x = self.model.bn1(x)
+        x = self.model.relu(x)
+        x = self.model.maxpool(x)
+        x = self.model.layer1(x)
+        x = self.model.layer2(x)
+        x = self.model.layer3(x)
+        x = self.model.layer4(x)
+        x = self.model.avgpool(x)
         x = torch.flatten(x, 1)
         before_fc = x
-        x = self.fc(x)
+        x = self.model.fc(x)
         return x, {"feature": before_fc}
 
 
 def get_model(args):
-    return resnet18(num_classes=args.num_classes)
+    return ResNet18(num_classes=args.num_classes)
 
 
 def get_criterion(args):
