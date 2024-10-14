@@ -9,7 +9,7 @@
 """
 
 
-import plot_config
+from . import plot_config
 
 try:
 	from .difficulty_accuracy_hist import plot_sample_difficulty
