@@ -10,4 +10,4 @@
 
 import torch
 
-import noisy, supervised, visualization
+from . import noisy, supervised, visualization

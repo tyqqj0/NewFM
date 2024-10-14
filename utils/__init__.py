@@ -11,5 +11,6 @@
 
 from .visualization import plot_sample_difficulty
 from .metrics.average_meter import AverageMeter
+from .text import cprint, text_in_box
 
-__all__ = ["plot_sample_difficulty", "AverageMeter"]
+__all__ = ["plot_sample_difficulty", "AverageMeter", "cprint", "text_in_box"]
