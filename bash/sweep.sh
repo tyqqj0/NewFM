@@ -5,11 +5,11 @@
 cd "$(dirname "$0")"
 # echo "当前目录: $(pwd)"
 
-# 检查是否有正在运行的 run.py 的 tmux 会话
-sessions=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | grep run_py_session)
+# 检查是否有正在运行的 sweep.py 的 tmux 会话
+sessions=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | grep sweep_py_session)
 
 if [ -n "$sessions" ]; then
-    echo "检测到以下正在运行的 run.py 会话："
+    echo "检测到以下正在运行的 sweep.py 会话："
     select session in $sessions "启动新的会话"; do
         if [ "$session" == "启动新的会话" ]; then
             break
@@ -28,10 +28,10 @@ cd ../
 echo "进入工作目录: $(pwd)"
 
 
-# 启动新的 tmux 会话运行 run.py, 并确保路径正确
-session_name="run_py_$(date +%Y%m%d_%H%M%S)"
+# 启动新的 tmux 会话运行 sweep.py, 并确保路径正确
+session_name="sweep_py_$(date +%Y%m%d_%H%M%S)"
 echo "启动新的 tmux 会话：$session_name"
-tmux new-session -s $session_name -d "python run.py"
+tmux new-session -s $session_name -d "python ./utils/sweep/sweep.py"
 
 # 连接到新启动的会话
 tmux attach-session -t $session_name
