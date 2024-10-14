@@ -113,7 +113,7 @@ class PseudoLabelTestEpoch(BasicEpoch):
 
             # forward
             outputs, _ = self.model(inputs)
-            
+
             all_outputs.append(outputs.cpu())
             all_targets.append(targets.cpu())
 
@@ -122,11 +122,13 @@ class PseudoLabelTestEpoch(BasicEpoch):
 
         diffculty_scores = diffculty(all_outputs)
         labels = torch.argmax(all_outputs, dim=1)
-        
-        # compute the bool 
+
+        # compute the bool
         # 传入: 难度值，是否正确，epoch
         bool_correct = (labels == all_targets).float()
-        image = plot_sample_difficulty(diffculty_scores, bool_correct, self.epoch_count) # input: difficulty scores, bool of correct, epoch
+        image = plot_sample_difficulty(
+            diffculty_scores, bool_correct, self.epoch_count
+        )  # input: difficulty scores, bool of correct, epoch
         save_manager.log_image(image, step=self.epoch_count)
 
         return

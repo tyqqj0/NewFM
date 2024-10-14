@@ -48,9 +48,9 @@ def apply_config():
     # 如果需要设置颜色，可以在这里处理
     plt_colors = CONFIG_PLT.get("colors", {})
     if plt_colors:
-        plt.rcParams['axes.facecolor'] = plt_colors.get("background", "#FFFFFF")
-        plt.rcParams['grid.color'] = plt_colors.get("grid", "#E5E5E5")
-        plt.rcParams['axes.edgecolor'] = plt_colors.get("axis", "#333333")
+        plt.rcParams["axes.facecolor"] = plt_colors.get("background", "#FFFFFF")
+        plt.rcParams["grid.color"] = plt_colors.get("grid", "#E5E5E5")
+        plt.rcParams["axes.edgecolor"] = plt_colors.get("axis", "#333333")
         # 其他颜色配置...
 
     # 应用 Seaborn 配置
@@ -70,6 +70,7 @@ def apply_config():
         if custom_palette:
             sns.set_palette(custom_palette)
         # 设置其他颜色...
+
 
 if not __is_loaded:
     load_config()
