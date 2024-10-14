@@ -23,6 +23,7 @@ from torch.utils.data import DataLoader
 from components.epochs.visualization import Image2DEpoch
 from components.epochs.supervised import TrainEpoch
 from components.epochs.supervised import ValEpoch
+from components.epochs.noisy import PseudoLabelTestEpoch
 from components.models.classification.resnet18 import (
     resnet18,
     get_criterion,
@@ -106,18 +107,17 @@ class CIFAR10_noisy_Supervised(BasicTrainer):
             color="green",
             bar=True,
         )
-        image_2d_epoch = Image2DEpoch(
-            name="image_2d",
-            loader=self.loaders["vis"],
+        pseudo_label_test_epoch = PseudoLabelTestEpoch(
+            name="pseudo_label_test",
+            loader=self.train_loader,
             trainer=self,
             color="red",
-            bar=False,
-            max_samples=3,
+            bar=True,
         )
 
-        epochs = {"train": train_epoch, "val": val_epoch, "image_2d": image_2d_epoch}
+        epochs = {"train": train_epoch, "val": val_epoch, "pseudo_label_test": pseudo_label_test_epoch}
         return epochs
 
     def run_epoch(self):
-        for phase in ["train", "val", "image_2d"]:
+        for phase in ["train", "val", "pseudo_label_test"]:
             self.epochs[phase].run()

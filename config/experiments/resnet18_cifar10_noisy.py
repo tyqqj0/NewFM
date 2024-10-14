@@ -29,7 +29,7 @@ from dataclasses import asdict, dataclass, field
 # from ..base.training import Supervised
 
 configs = [
-    "base/data/cifar10.py",
+    "base/data/cifar10_noisy.py",
     "base/model/resnet18.py",
     "base/training/supervised.py",
 ]

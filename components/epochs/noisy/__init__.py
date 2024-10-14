@@ -1,14 +1,12 @@
-# -*- CODING: UTF-8 -*-
-# @time 2024/10/13 17:34
-# @Author tyqqj
-# @File __init__.py.py
-# @
-# @Aim 
+# -*- coding: utf-8 -*-
+"""
+@File    :   __init__.py
+@Time    :   2024/10/14 18:03:23
+@Author  :   tyqqj
+@Version :   1.0
+@Contact :   tyqqj0@163.com
+@Desc    :   None
+"""
 
 
-def print_hi(name):
-    print(f'Hi, {name}')
-
-
-if __name__ == '__main__':
-    print_hi('Python')
+from .noisy_accuracy_epoch import PseudoLabelTestEpoch

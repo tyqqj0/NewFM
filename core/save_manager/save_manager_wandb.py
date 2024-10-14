@@ -21,8 +21,10 @@ import json
 
 
 import torch
-import wandb
-from .save_manager_base import BaseSaveManager
+
+# import wandb
+# from .save_manager_base import BaseSaveManager
+from PIL import Image
 
 # core/logger_wandb.py
 import wandb
@@ -49,8 +51,6 @@ class WandbSaveManager(BaseSaveManager):
 
         self.use_wandb = True
 
-
-            
     def commit(self):
         wandb.log({}, step=self.step, commit=True)
 
@@ -60,7 +60,6 @@ class WandbSaveManager(BaseSaveManager):
         if not isinstance(data, dict):
             raise ValueError(f"Data must be a dictionary, got {type(data)}")
         wandb.log(data, step=step, commit=False)
-
 
     def log_plot(self, x, y, step, title=None, columns=None, name="plot"):
         self.step = step
@@ -82,7 +81,7 @@ class WandbSaveManager(BaseSaveManager):
             raise ValueError(
                 f"Incorrect data format. All columns should be lists. Found types: {[type(col) for col in data]}"
             )
-        
+
         if any(len(col) != len(data[0]) for col in data):
             raise ValueError(
                 f"Incorrect data format. All columns should have the same length. Number of columns: {len(data)}, Length of each column: {[len(col) for col in data]}"
@@ -101,13 +100,15 @@ class WandbSaveManager(BaseSaveManager):
         for i, row in enumerate(table_data):
             table_data[i] = list(row)
             for j, item in enumerate(row):
-                if isinstance(item, (torch.Tensor, np.ndarray)):
-                    image = self._process_tensor_auto(item)
+                if isinstance(item, (torch.Tensor, np.ndarray, Image.Image)):
+                    if isinstance(item, Image.Image):
+                        pass
+                    elif isinstance(item, (torch.Tensor, np.ndarray)):
+                        image = self._process_tensor_auto(item)
                     if image is not None:
-                        
                         if isinstance(image, np.ndarray):
-                            # print(image.shape)
-                            # print(image)
+                                # print(image.shape)
+                                # print(image)
                             table_data[i][j] = wandb.Image(image)
                         else:
                             table_data[i][j] = image
@@ -124,13 +125,16 @@ class WandbSaveManager(BaseSaveManager):
         # Log the table
         wandb.log({name: table}, step=step, commit=False)
 
-
     def log_image(self, data, step, caption=None):
         self.step = step
-        if isinstance(data, torch.Tensor):
+        # PIL Image
+        if isinstance(data, Image.Image):
+            pass
+        # torch Tensor
+        elif isinstance(data, torch.Tensor):
             data = data.cpu().numpy()
         wandb.log({caption: [wandb.Image(data)]}, step=step, commit=False)
-        
+
     def log_table(self, data, step, columns=None, name="table"):
         self.step = step
         table = wandb.Table(columns=columns, data=data)

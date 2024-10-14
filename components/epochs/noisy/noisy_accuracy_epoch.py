@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@File    :   train_epoch_noisy.py
+@File    :   noisy_accuracy_epoch.py
 @Time    :   2024/10/12 23:48:31
 @Author  :   tyqqj
 @Version :   1.0
@@ -15,7 +15,7 @@ import torch
 
 from components.epochs.basic_epoch import BasicEpoch
 from core import logger, save_manager
-from utils import AverageMeter
+from utils import AverageMeter, plot_sample_difficulty
 
 # import os
 # import sys
@@ -95,7 +95,7 @@ def diffculty(output, mode="entropy", normalize=True):
     return confidence_scores
 
 
-class PesudoLabelTestEpoch(BasicEpoch):
+class PseudoLabelTestEpoch(BasicEpoch):
     def __init__(self, name, loader, trainer, color="blue", bar=True):
         super().__init__(
             name=name, loader=loader, trainer=trainer, color=color, bar=bar
@@ -104,6 +104,9 @@ class PesudoLabelTestEpoch(BasicEpoch):
     def epoch(self):
         self.model.eval()
 
+        all_outputs = []
+        all_targets = []
+
         # iterate the loader
         for inputs, targets, addition in self.loader:
             inputs, targets = inputs.to(self.device), targets.to(self.device)
@@ -111,11 +114,20 @@ class PesudoLabelTestEpoch(BasicEpoch):
             # forward
             outputs, _ = self.model(inputs)
             
-            diffculty_scores = diffculty(outputs)
-            
-            self.plot_histogram([proba, truett], epoch, folder='prob', pre='prob') if self.plot_histogram else None
+            all_outputs.append(outputs.cpu())
+            all_targets.append(targets.cpu())
 
-            # gmm find the noisy samples
+        all_outputs = torch.cat(all_outputs, dim=0)
+        all_targets = torch.cat(all_targets, dim=0)
+
+        diffculty_scores = diffculty(all_outputs)
+        labels = torch.argmax(all_outputs, dim=1)
+        
+        # compute the bool 
+        # 传入: 难度值，是否正确，epoch
+        bool_correct = (labels == all_targets).float()
+        image = plot_sample_difficulty(diffculty_scores, bool_correct, self.epoch_count) # input: difficulty scores, bool of correct, epoch
+        save_manager.log_image(image, step=self.epoch_count)
 
         return
 

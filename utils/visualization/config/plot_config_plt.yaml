@@ -1,0 +1,23 @@
+# plot_config_plt.yaml
+
+rcParams:
+  figure.figsize: [10, 6]
+  figure.dpi: 100
+  font.family: 'Arial'
+  font.size: 12
+  lines.linewidth: 2
+  lines.linestyle: '-'
+  legend.loc: 'best'
+  legend.fontsize: 10
+  # 更多 rcParams 配置...
+
+colors:
+  background: '#FFFFFF'
+  grid: '#E5E5E5'
+  axis: '#333333'
+  lines:
+    - '#1f77b4'
+    - '#ff7f0e'
+    - '#2ca02c'
+    - '#d62728'
+    - '#9467bd'
