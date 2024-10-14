@@ -18,4 +18,6 @@ import torch
 # import numpy as np
 
 
-# from .resnet18 import resnet18, get_criterion, get_optimizer, get_scheduler
+# from .resnet18 import ResNet18, get_criterion, get_optimizer, get_scheduler
+
+

@@ -47,9 +47,9 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default=config)
+    parser.add_argument("--config_file_path", type=str, default=config)
     args, unknown = parser.parse_known_args()
 
-    print("config:", args.config)
-    main(args.config)
+    print("config:", args.config_file_path)
+    main(args.config_file_path)
     # comparison = 1

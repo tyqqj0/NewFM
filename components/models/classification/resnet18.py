@@ -13,32 +13,35 @@ import torch.nn as nn
 from torchvision.models import resnet18
 import os
 import sys
-import time
-import json
+# import time
+# import json
 
 # import wandb
 # import numpy as np
+
+__all__ = ["ResNet18", "get_criterion", "get_optimizer", "get_scheduler"]
 
 
 class ResNet18(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
-        self.model = resnet18(num_classes=num_classes)
+        self.inside_model = resnet18(num_classes=num_classes)
 
     def forward(self, x):
+        # print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
         # return the output before fc and the final output
-        x = self.model.conv1(x)
-        x = self.model.bn1(x)
-        x = self.model.relu(x)
-        x = self.model.maxpool(x)
-        x = self.model.layer1(x)
-        x = self.model.layer2(x)
-        x = self.model.layer3(x)
-        x = self.model.layer4(x)
-        x = self.model.avgpool(x)
+        x = self.inside_model.conv1(x)
+        x = self.inside_model.bn1(x)
+        x = self.inside_model.relu(x)
+        x = self.inside_model.maxpool(x)
+        x = self.inside_model.layer1(x)
+        x = self.inside_model.layer2(x)
+        x = self.inside_model.layer3(x)
+        x = self.inside_model.layer4(x)
+        x = self.inside_model.avgpool(x)
         x = torch.flatten(x, 1)
         before_fc = x
-        x = self.model.fc(x)
+        x = self.inside_model.fc(x)
         return x, {"feature": before_fc}
 
 

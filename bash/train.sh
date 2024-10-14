@@ -31,7 +31,7 @@ echo "进入工作目录: $(pwd)"
 # 启动新的 tmux 会话运行 run.py, 并确保路径正确
 session_name="run_py_$(date +%Y%m%d_%H%M%S)"
 echo "启动新的 tmux 会话：$session_name"
-tmux new-session -s $session_name -d "python run.py"
+tmux new-session -s $session_name -d "python run.py --config_file_path config/experiments/resnet18_cifar10_noisy.py"
 
 # 连接到新启动的会话
 tmux attach-session -t $session_name

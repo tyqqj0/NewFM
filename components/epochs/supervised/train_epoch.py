@@ -30,6 +30,7 @@ class TrainEpoch(BasicEpoch):
 
     def epoch(self):
         self.model.train()
+        # print(type(self.model))
 
         loss_meter = AverageMeter()
         correct_meter = AverageMeter()
