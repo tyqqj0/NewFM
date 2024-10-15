@@ -1,0 +1,17 @@
+# 自定义的 Seaborn 配置
+
+# 上下文参数
+context: "notebook"
+
+# 风格参数
+style: "darkgrid"
+
+# 调色板
+palette: "deep"
+
+# 其他参数
+font: "Arial"
+font_scale: 1.2
+rc:
+  axes.labelsize: 14
+  axes.titlesize: 16
