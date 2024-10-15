@@ -14,9 +14,10 @@ from coqpit import Coqpit
 import abc
 from pprint import pprint
 import dataclasses
+
 # from attr import dataclass
 
-from ..paths import CONFIG_DIR, PROJECT_ROOT, UTILS_DIR
+from ..paths import CONFIG_DIR, PROJECT_ROOT, CORE_DIR
 
 
 # TODO: 自动生成运行名称run_name，想想sweep的时候怎么处理
@@ -96,10 +97,12 @@ def load_Coqpit(config_path: str) -> Coqpit:
     except Exception as e:
         print(f"Error instantiating Config: {e}")
         raise
-    
+
     # check if config_instance is a subclass of Coqpit
     if not isinstance(config_instance, type) or not issubclass(config_instance, Coqpit):
-        raise TypeError(f"Config instance must be a subclass of Coqpit, but got {type(config_instance)}")
+        raise TypeError(
+            f"Config instance must be a subclass of Coqpit, but got {type(config_instance)}"
+        )
 
     return config_instance
 
@@ -148,8 +151,7 @@ def process_config(config_path: str) -> Coqpit:
     in the 'base' list, and merges them into a single Coqpit object.
 
     Args:
-        config_path (str): The path to the config file. Should contain a 'base'
-                           list and a 'Config' class.
+        config_path (str): The path to the config file. Should contain a 'base' list and a 'Config' class.
 
     Returns:
         Coqpit: A Coqpit object representing the merged configuration.
@@ -190,8 +192,6 @@ def process_config(config_path: str) -> Coqpit:
 
     configs: List[str] = config_module.configs  # str list
     Config: Coqpit = config_module.Config  # Coqpit class
-    
-    
 
     # Config = Config()  # Coqpit instance
 
@@ -213,15 +213,15 @@ def process_config(config_path: str) -> Coqpit:
     config_list.append(Config)
     # important: base config should be the first one in the list
 
-    MergedConfig = merge_config_classes(config_list)  # 
+    MergedConfig = merge_config_classes(config_list)  #
     # MergedConfig = Config
-    
+
     # 显示 Config 类的所有方法
     # print(f"Config class methods: {dir(Config)}")
     # pprint(dataclasses.fields(MergedConfig))
-    
+
     # instantiate the Config class
-    config_instance = MergedConfig.init_from_argparse(arg_prefix='')
+    config_instance = MergedConfig.init_from_argparse(arg_prefix="")
 
     # set config_file_path
     config_instance.set_config_file_path(config_path)
@@ -234,41 +234,41 @@ def process_config(config_path: str) -> Coqpit:
 
 
 def merge_config_classes(config_classes: List[Type[Coqpit]]) -> Type[Coqpit]:
-    '''
+    """
     merge config classes into one class
     use multi-inheritance to merge config classes
     important: class order in the list is the order of inheritance
-    '''
+    """
     import dataclasses
     from dataclasses import MISSING, field, make_dataclass
-    
+
     # 收集所有字段的信息
     field_dict = {}
     for cls in config_classes:
         for f in dataclasses.fields(cls):
             field_dict[f.name] = f  # 后面的字段会覆盖前面的同名字段
-    
+
     fields = []
     for field_name, field_obj in field_dict.items():
         field_type = field_obj.type
         field_params = {}
         if field_obj.default is not MISSING:
-            field_params['default'] = field_obj.default
+            field_params["default"] = field_obj.default
         elif field_obj.default_factory is not MISSING:
-            field_params['default_factory'] = field_obj.default_factory
-        field_params['metadata'] = field_obj.metadata
+            field_params["default_factory"] = field_obj.default_factory
+        field_params["metadata"] = field_obj.metadata
         new_field = field(**field_params)
         fields.append((field_name, field_type, new_field))
-    
+
     # 创建合并后的数据类，继承所有配置类
     MergedConfig = make_dataclass(
         cls_name="MergedConfig",
         fields=fields,
         bases=tuple(config_classes),  # 让 MergedConfig 继承所有配置类
     )
-    
+
     # print("MergedConfig has fields:")
     # for field in dataclasses.fields(MergedConfig):
     #     print(f"- {field.name}: {field.type}")
-    
+
     return MergedConfig

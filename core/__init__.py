@@ -5,7 +5,7 @@
 # @
 # @Aim
 
-from .paths import PROJECT_ROOT, UTILS_DIR, CONFIG_DIR
+from .paths import PROJECT_ROOT, CORE_DIR, CONFIG_DIR
 from .config_processor.processor import process_config
 from .dir_processor import process_dirs
 from .log import get_logger
@@ -13,7 +13,7 @@ from .save_manager import get_save_manager
 
 __all__ = [
     "PROJECT_ROOT",
-    "UTILS_DIR",
+    "CORE_DIR",
     "CONFIG_DIR",
     "process_config",
     "process_dirs",

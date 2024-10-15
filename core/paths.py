@@ -3,7 +3,7 @@
 # @Author tyqqj
 # @File paths.py
 # @
-# @Aim 
+# @Aim
 
 import os
 import sys
@@ -12,8 +12,8 @@ import sys
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # 其他目录
-UTILS_DIR = os.path.join(PROJECT_ROOT, 'core')
-CONFIG_DIR = os.path.join(PROJECT_ROOT, 'config')
+CORE_DIR = os.path.join(PROJECT_ROOT, "core")
+CONFIG_DIR = os.path.join(PROJECT_ROOT, "config")
 
 # 将项目根目录添加到 Python 路径
 if PROJECT_ROOT not in sys.path:
