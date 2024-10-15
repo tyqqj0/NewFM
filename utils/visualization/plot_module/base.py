@@ -74,6 +74,7 @@ class BaseVisualization(ABC):
         plt_obj.savefig(buf, format='png')
         buf.seek(0)
         image = Image.open(buf)
+        plt.close()
         return image
 
     @data_format_checker
@@ -83,7 +84,7 @@ class BaseVisualization(ABC):
         try:
             image = self.convert_to_Image(image)
         except:
-            
+            pass
         if not isinstance(image, (Image.Image, np.ndarray)):
             raise ValueError("image must be a PIL.Image.Image or numpy.ndarray")
         return image

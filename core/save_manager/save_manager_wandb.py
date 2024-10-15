@@ -135,7 +135,8 @@ class WandbSaveManager(BaseSaveManager):
             data = data.cpu().numpy()
         wandb.log({caption: [wandb.Image(data)]}, step=step, commit=False)
         # close Image
-        if isinstance
+        if isinstance(data, Image.Image):
+            data.close()
 
     def log_table(self, data, step, columns=None, name="table"):
         self.step = step
