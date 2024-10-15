@@ -10,28 +10,30 @@
 
 
 # decorator
-def data_format_checker(data_format: dict):
-    def decorator(func):
-        def wrapper(data: dict):
-            # check data format
-            if not isinstance(data, dict):
-                raise ValueError("data must be a dictionary")
+from functools import wraps
 
-            # check data keys
-            for key in data.keys():
-                if key not in data_format.keys():
-                    raise ValueError(
-                        f"data[{key}] is not in data_format, {func.__name__} should have keys: {data_format.keys()}"
-                    )
+def data_format_checker(func):
+    @wraps(func)
+    def wrapper(self, data: dict):
+        data_format = self.data_format  # 从实例中获取 data_format
 
-            # check data values
-            for key, value in data.items():
-                if not isinstance(value, data_format[key]):
-                    raise ValueError(
-                        f"data[{key}] must be {data_format[key]}, but got {type(value)}"
-                    )
-            return func(data)
+        # 检查 data 是否为字典
+        if not isinstance(data, dict):
+            raise ValueError("data must be a dictionary")
 
-        return wrapper
+        # 检查 data 的键是否符合预期
+        for key in data.keys():
+            if key not in data_format.keys():
+                raise ValueError(
+                    f"data[{key}] is not in data_format, {func.__name__} should have keys: {list(data_format.keys())}"
+                )
 
-    return decorator
+        # 检查 data 的值是否符合预期类型
+        for key, value in data.items():
+            expected_type = data_format[key]
+            if not isinstance(value, expected_type):
+                raise ValueError(
+                    f"data[{key}] must be {expected_type}, but got {type(value)}"
+                )
+        return func(self, data)
+    return wrapper

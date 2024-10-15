@@ -134,6 +134,8 @@ class WandbSaveManager(BaseSaveManager):
         elif isinstance(data, torch.Tensor):
             data = data.cpu().numpy()
         wandb.log({caption: [wandb.Image(data)]}, step=step, commit=False)
+        # close Image
+        if isinstance
 
     def log_table(self, data, step, columns=None, name="table"):
         self.step = step

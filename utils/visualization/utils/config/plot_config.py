@@ -34,9 +34,9 @@ def load_config(sns_config_path=None):  # plt_config_path=None,
     if CONFIG_SNS is None:
         if sns_config_path is None:
             sns_config_path = os.path.join(
-                os.path.dirname(__file__), "config", "plot_config_sns.yaml"
+                os.path.dirname(__file__), "plot_config_sns.yaml"
             )
-        with open(sns_config_path, "r") as f:
+        with open(sns_config_path, "r", encoding="utf-8") as f:
             CONFIG_SNS = yaml.safe_load(f)
     apply_config()
 
