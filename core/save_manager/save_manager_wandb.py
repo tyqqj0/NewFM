@@ -12,9 +12,6 @@ import warnings
 import numpy as np
 import torch
 import os
-import sys
-import time
-import json
 
 # import wandb
 # import numpy as np
@@ -127,6 +124,8 @@ class WandbSaveManager(BaseSaveManager):
 
     def log_image(self, data, step, caption=None):
         self.step = step
+        if caption is None:
+            caption = "image"
         # PIL Image
         if isinstance(data, Image.Image):
             pass
