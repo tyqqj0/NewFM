@@ -76,4 +76,6 @@ def apply_config():
 
 if not __is_loaded:
     load_config()
+    print(f"default visualization config: plot_config_sns.yaml loaded")
+    # print(CONFIG_SNS)
     __is_loaded = True

@@ -15,3 +15,4 @@ font_scale: 1.2
 rc:
   axes.labelsize: 14
   axes.titlesize: 16
+  # font.size: 14

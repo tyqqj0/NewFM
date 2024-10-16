@@ -126,16 +126,23 @@ class WandbSaveManager(BaseSaveManager):
         self.step = step
         if caption is None:
             caption = "image"
+        # 如果数据是SVG字符串
+        if isinstance(data, str) and data.strip().startswith("<svg"):
+            # 使用wandb.Html记录SVG内容
+            wandb.log({caption: wandb.Html(data)}, step=step, commit=False)
         # PIL Image
-        if isinstance(data, Image.Image):
-            pass
+        elif isinstance(data, Image.Image):
+            wandb.log({caption: [wandb.Image(data)]}, step=step, commit=False)
+            data.close()
         # torch Tensor
         elif isinstance(data, torch.Tensor):
             data = data.cpu().numpy()
-        wandb.log({caption: [wandb.Image(data)]}, step=step, commit=False)
-        # close Image
-        if isinstance(data, Image.Image):
-            data.close()
+            wandb.log({caption: [wandb.Image(data)]}, step=step, commit=False)
+        # NumPy 数组
+        elif isinstance(data, np.ndarray):
+            wandb.log({caption: [wandb.Image(data)]}, step=step, commit=False)
+        else:
+            raise ValueError(f"Unsupported data type for logging image: {type(data)}")
 
     def log_table(self, data, step, columns=None, name="table"):
         self.step = step
