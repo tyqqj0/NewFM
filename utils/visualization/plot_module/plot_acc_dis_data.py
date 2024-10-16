@@ -8,6 +8,7 @@
 @Desc    :   None
 """
 
+import numpy as np
 from .base import BaseVisualization
 from ..utils.config import plot_config
 import matplotlib.pyplot as plt
@@ -33,9 +34,16 @@ class PlotAccDisData(BaseVisualization):
         :param data: 数据字典，包含 'S0.1', 'S0.3', 'S0.5', 'S0.7' 四个键
         :return: Figure 对象
         """
+        label_map = {
+            "S0.1": "Symmetric Noise Ratio 0.1",
+            "S0.3": "Symmetric Noise Ratio 0.3",
+            "S0.5": "Symmetric Noise Ratio 0.5",
+            "S0.7": "Symmetric Noise Ratio 0.7",
+        }
         # 创建一个 DataFrame，包含数据和对应的标签
         df = pd.DataFrame(
             {
+                "Difficulty": np.linspace(0, 1, len(data["S0.1"])),
                 "S0.1": data["S0.1"],
                 "S0.3": data["S0.3"],
                 "S0.5": data["S0.5"],
@@ -44,86 +52,94 @@ class PlotAccDisData(BaseVisualization):
         )
 
         # 计算四组数据的平均值和标准差, 并添加到 DataFrame 中
-        mean_values = df.mean(axis=1)
-        std_values = df.std(axis=1)
+        mean_values = df[["S0.1", "S0.3", "S0.5", "S0.7"]].mean(axis=1)
+        std_values = df[["S0.1", "S0.3", "S0.5", "S0.7"]].std(axis=1)
         std_upper = mean_values + std_values
         std_lower = mean_values - std_values
         df["mean"] = mean_values
+        df["std"] = std_values
         df["std_upper"] = std_upper
         df["std_lower"] = std_lower
 
         # 创建一个图形对象
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(6, 4))
 
         palette = self.config.get("palette", "deep")
-        print(palette)
+        # print(palette)
 
-        # 绘制四条线
-        sns.lineplot(
-            data=df,
-            x=df.index,
-            y="S0.1",
-            label="S0.1",
-            ax=ax,
-            color=palette[0],
-        )
-        sns.lineplot(
-            data=df,
-            x=df.index,
-            y="S0.3",
-            label="S0.3",
-            ax=ax,
-            color=palette[1],
-        )
-        sns.lineplot(
-            data=df,
-            x=df.index,
-            y="S0.5",
-            label="S0.5",
-            ax=ax,
-            color=palette[2],
-        )
-        sns.lineplot(
-            data=df,
-            x=df.index,
-            y="S0.7",
-            label="S0.7",
-            ax=ax,
-            color=palette[3],
-        )
+        type_map = {
+            "scatter": 0,
+            "line": 1,
+        }
+        # plot_type = "scatter"  # 可以设置为 "scatter" 或 "line"
+        plot_type = self.config.get("plot_type", "scatter")
 
         # 绘制标准差区域
+        n = 6  # 假设循环5次
+        for i in range(n):
+            scale = (n - i) / n
+            ax.fill_between(
+                df["Difficulty"],
+                df["mean"] - df["std"] * scale,
+                df["mean"] + df["std"] * scale,
+                color=palette[4],
+                alpha=0.3 * scale,
+                label="Std Area" if i == 0 else "",
+            )
+
+        for i, label in enumerate(["S0.1", "S0.3", "S0.5", "S0.7"]):
+            if type_map[plot_type] == 0:
+                sns.scatterplot(
+                    data=df,
+                    x="Difficulty",
+                    y=label,
+                    label=label_map[label],
+                    ax=ax,
+                    color=palette[i],
+                    marker="o",
+                )
+            elif type_map[plot_type] == 1:
+                # print(df.index)
+                sns.lineplot(
+                    data=df,
+                    x="Difficulty",
+                    y=label,
+                    label=label_map[label],
+                    ax=ax,
+                    color=palette[i],
+                    marker="o",
+                    linewidth=2,
+                )
+
         sns.lineplot(
             data=df,
-            x=df.index,
+            x="Difficulty",
             y="mean",
-            label="mean",
+            label="Mean",
             ax=ax,
             color=palette[4],
+            linewidth=3,
         )
-        sns.lineplot(
-            data=df,
-            x=df.index,
-            y="std_upper",
-            label="std_upper",
-            ax=ax,
-            color=palette[4],
-        )
-        sns.lineplot(
-            data=df,
-            x=df.index,
-            y="std_lower",
-            label="std_lower",
-            ax=ax,
-            color=palette[4],
-        )
-        ax.fill_between(
-            df.index,
-            df["std_lower"],
-            df["std_upper"],
-            color=palette[4],
-            alpha=0.3,
-        )
+        # sns.lineplot(
+        #     data=df,
+        #     x=df.index,
+        #     y="std_upper",
+        #     label="std_upper",
+        #     ax=ax,
+        #     color=palette[5],
+        # )
+        # sns.lineplot(
+        #     data=df,
+        #     x=df.index,
+        #     y="std_lower",
+        #     label="std_lower",
+        #     ax=ax,
+        #     color=palette[5],
+        # )
+
+        # 紧凑
+        # plt.tight_layout()
+        plt.subplots_adjust(left=0.1, right=0.95, top=0.9, bottom=0.15)
 
         # 设置背景颜色
         ax.set_facecolor(palette[5])
@@ -131,13 +147,24 @@ class PlotAccDisData(BaseVisualization):
         # 设置y轴范围
         ax.set_ylim(0, 1)
 
+        # 设置x轴范围
+        ax.set_xlim(0, 1)
+
         # 添加图例
-        ax.legend()
+        ax.legend(loc="best")
 
         # 设置标题和标签
-        ax.set_title("Accuracy Distribution")
-        ax.set_xlabel("Sample Index")
-        ax.set_ylabel("Accuracy")
+        # ax.set_title(
+        #     "Impact of Sample Difficulty \non the Accuracy of Pseudo-label Inference",
+        #     fontsize=self.config.get("title_font_size", 16),
+        # )
+        ax.set_xlabel(
+            "Sample Difficulty", fontsize=self.config.get("label_font_size", 14)
+        )
+        ax.set_ylabel(
+            "Average Accuracy of Filtered Noisy Labels",
+            fontsize=self.config.get("label_font_size", 14),
+        )
 
         return fig
 
@@ -287,9 +314,10 @@ if __name__ == "__main__":
     COLOR_SCHEME = {
         "S0.1": "#ff7f0e",
         "S0.3": "#ffbf5e",
-        "S0.5": "#bfbf5e",
+        "S0.5": "#5f9ea0",  # 换成相似色系的青色
         "S0.7": "#1f77b4",
-        "mean": "#d9d9d9",
+        "mean": "#696969",
+        "std": "#d9d9d9",
         "background": "#f2f2f2",
         "title": "#333333",
     }  # 橙色  # 蓝色
@@ -301,13 +329,21 @@ if __name__ == "__main__":
             COLOR_SCHEME["S0.5"],
             COLOR_SCHEME["S0.7"],
             COLOR_SCHEME["mean"],
+            COLOR_SCHEME["std"],
             COLOR_SCHEME["background"],
             COLOR_SCHEME["title"],
         ]
     )
 
-    plot = PlotAccDisData({"palette": palette})
+    plot = PlotAccDisData(
+        {
+            "palette": palette,
+            "title_font_size": 16,
+            "label_font_size": 14,
+            "plot_type": "line",
+        }
+    )
     plot.get_plt(data)
     plt.savefig("acc_dis_data.png")
-    plt.show()
+    # plt.show()
     plt.close()

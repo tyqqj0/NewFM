@@ -105,15 +105,17 @@ class BaseVisualization(ABC):
             try:
                 warnings.warn("image is a plt module, please use plt.gcf()")
                 image = self.convert_to_svg(plt.gcf())
-            except:
-                pass
+            except Exception as e:
+                print(e)
+                # pass
         if isinstance(image, (plt.Figure, plt.Axes)):
             image = self.convert_to_svg(image)
         else:
             try:
                 image = self.convert_to_Image(image)
-            except:
-                pass
+            except Exception as e:
+                print(e)
+                # pass
         if not isinstance(image, (Image.Image, np.ndarray, str)):
             raise ValueError(
                 "image must be a PIL.Image.Image or numpy.ndarray or svg_string"
@@ -133,8 +135,7 @@ class BaseVisualization(ABC):
             raise ValueError("image must be a Matplotlib Figure object")
 
     def plot(self, data: dict) -> Image.Image | str:
-        image = self.__generate_plot(data)
-        return image
+        return self.__generate_plot(data)
 
     def __call__(self, data) -> Image.Image | str:
         return self.__generate_plot(data)
