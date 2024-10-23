@@ -345,5 +345,6 @@ if __name__ == "__main__":
     )
     plot.get_plt(data)
     plt.savefig("acc_dis_data.png")
+    plt.savefig("acc_dis_data.svg")
     # plt.show()
     plt.close()
